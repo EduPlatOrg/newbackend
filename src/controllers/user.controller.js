@@ -125,3 +125,60 @@ export const verifyUser = async (req, res) => {
     console.error(error, '<--- ERROR');
   }
 };
+
+export const logInUser = async (req, res) => {
+  const { email, password, isLogged } = req.body;
+
+  try {
+    const userFound = await User.findOneAndUpdate(
+      { email },
+      { isLogged },
+      { new: true }
+    );
+    console.log(userFound, '<--- userFound');
+    if (!userFound) {
+      //TODO: VALIDAR MEJOR LOS ERRORES
+      return res.status(400).send('User not found');
+    }
+    const isMatch = await bcrypt.compare(password, userFound.password);
+    if (!isMatch) {
+      return res.status(400).send('Invalid credentials');
+    }
+    if (!userFound.isVerified) {
+      return res.status(400).send('User not verified');
+    }
+    const tokenAccess = await generateTokenAccess({
+      _id: userFound._id,
+      firstname: userFound.firstname,
+      lastname: userFound.lastname,
+      username: userFound.username,
+      email: userFound.email,
+      picture: userFound.avatar,
+      isLogged: userFound.isLogged,
+    });
+    res.cookie('token', tokenAccess, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+    });
+    res.status(200).json(userFound);
+  } catch (error) {
+    console.error(error, '<--- ERROR');
+  }
+};
+export const logInWithToken = async (req, res) => {
+  const { _id } = req.user;
+  console.log(req.user, '<--- req.user');
+  try {
+    const userFound = await User.findById(_id);
+    if (!userFound) {
+      return res.status(400).send('User not found');
+    }
+    res.status(200).json(userFound);
+  } catch (error) {
+    console.error(error, '[LOG IN WITH TOKEN ERROR]');
+    res.status(400).send('token invalido');
+  }
+};
+
+//TODO: IMPLEMENTAR LOGOUT, FORGOT PASSWORD ( implementado con el email del usuario, nosotros creamos la contraseña actualizamos el usuario y se la enviamos por email), RESET PASSWORD( desde el front lo cambia el usuario, nosotros recibimos el password lo pasamos por el salt y actualizamos el usuer en la db ), UPDATE USER( visibilidad de datos personales, profile picture), ENDPOINT para cojer todos los user ...

@@ -5,6 +5,8 @@ import {
   verifyEmail,
   veryfyUsername,
   verifyUser,
+  logInUser,
+  logInWithToken,
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -19,6 +21,10 @@ router.get('/verifyUsername', veryfyUsername);
 router.get('/verifyEmail', verifyEmail);
 
 router.post('/user/verify/:token', verifyUser);
+
+router.post('/login', logInUser);
+
+router.get('/user/logInWithToken', logInWithToken);
 
 router.use(authRequired);
 
