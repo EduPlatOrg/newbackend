@@ -7,6 +7,7 @@ import {
   verifyUser,
   logInUser,
   logInWithToken,
+  logOut,
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -29,5 +30,8 @@ router.get('/user/logInWithToken', logInWithToken);
 router.use(authRequired);
 
 // TODO: AQUI LAS RUTAS QUE REQUIERAN DE AUTENTICACION
+
+router.get('/logout', logOut);
+
 
 export default router;
