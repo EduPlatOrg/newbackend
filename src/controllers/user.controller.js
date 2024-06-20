@@ -211,10 +211,10 @@ export const forgotPassword = async (req, res) => {
     if (userExists) {
       const newPin = randomPinNumber(10);
       const salt = await bcrypt.hash(newPin, 10);
-      
+
       await User.findOneAndUpdate(
         { email },
-        {password : salt},
+        { password: salt },
         { new: true }
       );
       sendNewPassword(email, newPin)
@@ -234,7 +234,7 @@ export const forgotPassword = async (req, res) => {
 }
 
 export const resetPassword = async (req, res) => {
-  const {  newPassword } = req.body;
+  const { newPassword } = req.body;
   const { _id } = req.user;
 
   try {
@@ -244,14 +244,14 @@ export const resetPassword = async (req, res) => {
       const salt = await bcrypt.hash(newPassword, 10);
       await User.findByIdAndUpdate(
         { _id },
-        {password : salt},
+        { password: salt },
         { new: true }
       );
       return res.status(200).json({ success: true, message: 'Password successfully updated.' });
     } else {
       return res
         .status(404)
-        .json({ success: false, message: 'Email not found.' });
+        .json({ success: false, message: 'User not found.' });
     }
   } catch (error) {
     console.error(error);
@@ -261,4 +261,25 @@ export const resetPassword = async (req, res) => {
   }
 }
 
-//TODO: IMPLEMENTAR , , UPDATE USER( visibilidad de datos personales, profile picture), ENDPOINT para cojer todos los user ...
+export const getAllUsers = async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const userExists = await User.findById({ _id });
+
+    if (userExists) {
+      const allUsers = await User.find({}, { username: true, isLogged: true })
+      return res.status(200).json({ success: true, _id, allUsers });
+    } else {
+      return res
+        .status(404)
+        .json({ success: false, message: 'User not found.' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal server error.' });
+  }
+}
+
+//TODO: IMPLEMENTAR , , UPDATE USER( visibilidad de datos personales, profile picture)

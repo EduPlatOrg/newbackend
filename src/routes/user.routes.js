@@ -10,6 +10,7 @@ import {
   logOut,
   forgotPassword,
   resetPassword,
+  getAllUsers,
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -36,6 +37,8 @@ router.use(authRequired);
 // ! AQUI LAS RUTAS QUE REQUIERAN DE AUTENTICACION
 
 router.get('/logout', logOut);
+
+router.get('/getAllUsers', getAllUsers);
 
 router.patch('/resetPassword', resetPassword);
 
