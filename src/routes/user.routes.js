@@ -37,7 +37,7 @@ router.use(authRequired);
 
 router.get('/logout', logOut);
 
-router.post('/resetPassword', resetPassword);
+router.patch('/resetPassword', resetPassword);
 
 
 export default router;
