@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { generateTokenAccess } from '../libs/jsonwebtoken.js';
 import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
-//import { sendEmailVerification } from '../services/mailing.js';
+import { sendEmailVerification } from '../services/mailing.js';
 
 export const registerUser = async (req, res) => {
   const { firstname, lastname, username, email, password } = req.body;
@@ -38,7 +38,7 @@ export const registerUser = async (req, res) => {
     const tokenAccess = await generateTokenAccess({ _id: newUser._id });
 
     // Enviar correo de verificacion de email --> api gmail
-    //sendEmailVerification(email, tokenAccess);
+    sendEmailVerification(email, tokenAccess);
     res.status(200).json({
       newUser,
       success: true,

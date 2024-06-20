@@ -40,6 +40,7 @@ export const transporter = nodemailer.createTransport({
 });
 
 export async function sendEmailVerification(email, tokenAccess) {
+  console.log('Enviando email de verificación');
   return await transporter.sendMail({
     from: process.env.EMAIL_USER,
     to: email,
