@@ -186,7 +186,6 @@ export const logInWithToken = async (req, res) => {
 export const logOut = async (req, res) => {
   // console.log('log out controller')
   const { _id } = req.user;
-  const { isLogged } = req.body;
 
   // elimino cookies lo primero
   res.clearCookie('token');
@@ -194,7 +193,7 @@ export const logOut = async (req, res) => {
   try {
     const { username } = await User.findOneAndUpdate(
       { _id },
-      { isLogged },
+      { isLogged: false },
       { new: true }
     );
     res.status(200).json({ username, message: 'Logged Out', success: true });
