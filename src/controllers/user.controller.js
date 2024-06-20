@@ -32,6 +32,7 @@ export const registerUser = async (req, res) => {
         country: '',
       },
     });
+    // TODO: no debería ser con mayúsculas: User.save() ??
     const newUser = await user.save();
     console.log(newUser, '<--- newUser backend controller registration');
     const tokenAccess = await generateTokenAccess({ _id: newUser._id });
@@ -166,6 +167,7 @@ export const logInUser = async (req, res) => {
     console.error(error, '<--- ERROR');
   }
 };
+
 export const logInWithToken = async (req, res) => {
   const { _id } = req.user;
   console.log(req.user, '<--- req.user');
@@ -181,4 +183,29 @@ export const logInWithToken = async (req, res) => {
   }
 };
 
-//TODO: IMPLEMENTAR LOGOUT, FORGOT PASSWORD ( implementado con el email del usuario, nosotros creamos la contraseña actualizamos el usuario y se la enviamos por email), RESET PASSWORD( desde el front lo cambia el usuario, nosotros recibimos el password lo pasamos por el salt y actualizamos el usuer en la db ), UPDATE USER( visibilidad de datos personales, profile picture), ENDPOINT para cojer todos los user ...
+export const logOut = async (req, res) => {
+  // console.log('log out controller')
+  const { _id } = req.user;
+  const { isLogged } = req.body;
+
+  // elimino cookies lo primero
+  res.cookie('token', '', {
+    httpOnly: true,
+    sameSite: 'none',
+    secure: true,
+  });
+
+  try {
+    const { username } = await User.findOneAndUpdate(
+      { _id },
+      { isLogged },
+      { new: true }
+    );
+    res.status(200).json({ username, message: 'Logged Out', success: true });
+  } catch (error) {
+    console.error(error, '<--- ERROR');
+    res.status(400).json({ message: 'Error en LogOut' })
+  }
+}
+
+//TODO: IMPLEMENTAR , FORGOT PASSWORD ( implementado con el email del usuario, nosotros creamos la contraseña actualizamos el usuario y se la enviamos por email), RESET PASSWORD( desde el front lo cambia el usuario, nosotros recibimos el password lo pasamos por el salt y actualizamos el usuer en la db ), UPDATE USER( visibilidad de datos personales, profile picture), ENDPOINT para cojer todos los user ...
