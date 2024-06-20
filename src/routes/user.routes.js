@@ -8,6 +8,7 @@ import {
   logInUser,
   logInWithToken,
   logOut,
+  forgotPassword,
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -26,6 +27,8 @@ router.post('/user/verify/:token', verifyUser);
 router.post('/login', logInUser);
 
 router.get('/user/logInWithToken', logInWithToken);
+
+router.get('/forgotPassword', forgotPassword);
 
 router.use(authRequired);
 

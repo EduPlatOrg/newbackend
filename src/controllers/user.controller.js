@@ -2,7 +2,8 @@ import bcrypt from 'bcryptjs';
 import { generateTokenAccess } from '../libs/jsonwebtoken.js';
 import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
-import { sendEmailVerification } from '../services/mailing.js';
+import { sendEmailVerification, sendNewPassword } from '../services/mailing.js';
+import { randomPinNumber } from '../utils/randomGenerator.js';
 
 export const registerUser = async (req, res) => {
   const { firstname, lastname, username, email, password } = req.body;
@@ -32,7 +33,6 @@ export const registerUser = async (req, res) => {
         country: '',
       },
     });
-    // TODO: no debería ser con mayúsculas: User.save() ??
     const newUser = await user.save();
     console.log(newUser, '<--- newUser backend controller registration');
     const tokenAccess = await generateTokenAccess({ _id: newUser._id });
@@ -184,10 +184,8 @@ export const logInWithToken = async (req, res) => {
 };
 
 export const logOut = async (req, res) => {
-  // console.log('log out controller')
   const { _id } = req.user;
 
-  // elimino cookies lo primero
   res.clearCookie('token');
 
   try {
@@ -203,4 +201,36 @@ export const logOut = async (req, res) => {
   }
 };
 
-//TODO: IMPLEMENTAR , FORGOT PASSWORD ( implementado con el email del usuario, nosotros creamos la contraseña actualizamos el usuario y se la enviamos por email), RESET PASSWORD( desde el front lo cambia el usuario, nosotros recibimos el password lo pasamos por el salt y actualizamos el usuer en la db ), UPDATE USER( visibilidad de datos personales, profile picture), ENDPOINT para cojer todos los user ...
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  if (!email || email.length < 3) return;
+
+  try {
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      const newPin = randomPinNumber(10);
+      const salt = await bcrypt.hash(newPin, 10);
+      
+      await User.findOneAndUpdate(
+        { email },
+        {password : salt},
+        { new: true }
+      );
+      sendNewPassword(email, newPin)
+
+      return res.status(200).json({ success: true, message: 'Recovery mail sent, please check your inbox.' });
+    } else {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Email not found.' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal server error.' });
+  }
+}
+
+//TODO: IMPLEMENTAR , RESET PASSWORD( desde el front lo cambia el usuario, nosotros recibimos el password lo pasamos por el salt y actualizamos el usuer en la db ), UPDATE USER( visibilidad de datos personales, profile picture), ENDPOINT para cojer todos los user ...
