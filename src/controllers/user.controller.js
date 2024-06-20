@@ -204,8 +204,8 @@ export const logOut = async (req, res) => {
     res.status(200).json({ username, message: 'Logged Out', success: true });
   } catch (error) {
     console.error(error, '<--- ERROR');
-    res.status(400).json({ message: 'Error en LogOut' })
+    res.status(400).json({ message: 'Error en LogOut' });
   }
-}
+};
 
 //TODO: IMPLEMENTAR , FORGOT PASSWORD ( implementado con el email del usuario, nosotros creamos la contraseña actualizamos el usuario y se la enviamos por email), RESET PASSWORD( desde el front lo cambia el usuario, nosotros recibimos el password lo pasamos por el salt y actualizamos el usuer en la db ), UPDATE USER( visibilidad de datos personales, profile picture), ENDPOINT para cojer todos los user ...
