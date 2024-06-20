@@ -189,11 +189,7 @@ export const logOut = async (req, res) => {
   const { isLogged } = req.body;
 
   // elimino cookies lo primero
-  res.cookie('token', '', {
-    httpOnly: true,
-    sameSite: 'none',
-    secure: true,
-  });
+  res.clearCookie('token');
 
   try {
     const { username } = await User.findOneAndUpdate(
