@@ -37,6 +37,9 @@ export const transporter = nodemailer.createTransport({
     refreshToken: process.env.REFRESH_TOKEN,
     mailToken,
   },
+  tls: {
+    rejectUnauthorized: false
+  }
 });
 
 export async function sendEmailVerification(email, tokenAccess) {
