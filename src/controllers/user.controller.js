@@ -136,7 +136,7 @@ export const logInUser = async (req, res) => {
       { isLogged },
       { new: true }
     );
-    console.log(userFound, '<--- userFound');
+    // console.log(userFound, '<--- userFound');
     if (!userFound) {
       //TODO: VALIDAR MEJOR LOS ERRORES
       return res.status(400).send('User not found');
@@ -233,4 +233,32 @@ export const forgotPassword = async (req, res) => {
   }
 }
 
-//TODO: IMPLEMENTAR , RESET PASSWORD( desde el front lo cambia el usuario, nosotros recibimos el password lo pasamos por el salt y actualizamos el usuer en la db ), UPDATE USER( visibilidad de datos personales, profile picture), ENDPOINT para cojer todos los user ...
+export const resetPassword = async (req, res) => {
+  const {  newPassword } = req.body;
+  const { _id } = req.user;
+
+  try {
+    const userExists = await User.findById({ _id });
+
+    if (userExists) {
+      const salt = await bcrypt.hash(newPassword, 10);
+      await User.findByIdAndUpdate(
+        { _id },
+        {password : salt},
+        { new: true }
+      );
+      return res.status(200).json({ success: true, message: 'Password successfully updated.' });
+    } else {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Email not found.' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal server error.' });
+  }
+}
+
+//TODO: IMPLEMENTAR , , UPDATE USER( visibilidad de datos personales, profile picture), ENDPOINT para cojer todos los user ...
