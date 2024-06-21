@@ -109,6 +109,7 @@ export const verifyUser = async (req, res) => {
     if (!decodToken || !decodToken._id) {
       return res.status(400).send('Token is invalid');
     }
+    console.log('LLEGO AQUI ++++++++++++++++++++++++++');
     const userFound = await User.findByIdAndUpdate(
       decodToken._id,
       {
@@ -116,12 +117,13 @@ export const verifyUser = async (req, res) => {
       },
       { new: true }
     );
-    res
-      .status(200)
-      .json({ userFound, message: 'User verified', success: true });
+    console.log(userFound, '<--- userFound ***************');
     if (!userFound) {
       return res.status(400).json({ msg: 'User not found' });
     }
+    res
+      .status(200)
+      .json({ userFound, message: 'User verified', success: true });
   } catch (error) {
     console.error(error, '<--- ERROR');
   }
@@ -216,12 +218,10 @@ export const forgotPassword = async (req, res) => {
       await User.findOneAndUpdate({ email }, { password: salt }, { new: true });
       sendNewPassword(email, newPin);
 
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: 'Recovery mail sent, please check your inbox.',
-        });
+      return res.status(200).json({
+        success: true,
+        message: 'Recovery mail sent, please check your inbox.',
+      });
     } else {
       return res
         .status(404)
