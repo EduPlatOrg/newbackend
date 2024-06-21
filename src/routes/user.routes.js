@@ -8,11 +8,14 @@ import {
   logInUser,
   logInWithToken,
   logOut,
+  forgotPassword,
+  resetPassword,
+  getAllUsers,
 } from '../controllers/user.controller.js';
 
 const router = Router();
 
-// TODO: AQUI LAS RUTAS QUE NO REQUIRAN DE AUTENTICACION
+// ! AQUI LAS RUTAS QUE NO REQUIRAN DE AUTENTICACION
 // COMO EL REGISTER, LOGIN, VERIFICATION EMAIL, FORGOT PASSWORD, ETC
 
 router.post('/register', registerUser);
@@ -27,11 +30,17 @@ router.post('/login', logInUser);
 
 router.get('/user/logInWithToken', logInWithToken);
 
+router.get('/forgotPassword', forgotPassword);
+
 router.use(authRequired);
 
-// TODO: AQUI LAS RUTAS QUE REQUIERAN DE AUTENTICACION
+// ! AQUI LAS RUTAS QUE REQUIERAN DE AUTENTICACION
 
 router.get('/logout', logOut);
+
+router.get('/getAllUsers', getAllUsers);
+
+router.patch('/resetPassword', resetPassword);
 
 
 export default router;
