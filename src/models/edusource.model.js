@@ -116,4 +116,4 @@ const edusourceScheme = mongoose.Schema({
   ],
 });
 
-const Edusource = mongoose.model('Edusource', edusourceScheme);
+export default mongoose.model('Edusource', edusourceScheme);
