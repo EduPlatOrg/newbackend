@@ -38,6 +38,7 @@ const edusourceScheme = mongoose.Schema({
   language: {
     type: String,
     maxLenght: 10,
+    required: true,
   },
   level: {
     type: String,
@@ -48,7 +49,7 @@ const edusourceScheme = mongoose.Schema({
     maxLenght: 50,
     required: true,
   },
-  theme: [String],
+
   type: {
     type: String,
     maxLenght: 50,
@@ -69,10 +70,7 @@ const edusourceScheme = mongoose.Schema({
       type: String,
       required: false,
     },
-    file: {
-      data: Buffer,
-      contentType: String,
-    },
+
     uploadTime: {
       type: Date,
       default: Date.now,
