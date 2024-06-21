@@ -28,12 +28,11 @@ router.post('/user/verify/:token', verifyUser);
 
 router.post('/login', logInUser);
 
-router.get('/user/logInWithToken', logInWithToken);
-
-router.get('/forgotPassword', forgotPassword);
+router.post('/forgotPassword', forgotPassword);
 
 router.use(authRequired);
 
+router.get('/user/logInWithToken', logInWithToken);
 // ! AQUI LAS RUTAS QUE REQUIERAN DE AUTENTICACION
 
 router.get('/logout', logOut);
@@ -41,6 +40,5 @@ router.get('/logout', logOut);
 router.get('/getAllUsers', getAllUsers);
 
 router.patch('/resetPassword', resetPassword);
-
 
 export default router;

@@ -38,8 +38,8 @@ export const transporter = nodemailer.createTransport({
     mailToken,
   },
   tls: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 export async function sendEmailVerification(email, tokenAccess) {
@@ -170,7 +170,7 @@ export const createChangePassword = (password) => {
     <body>
     <h1>Tu nueva contraseña de Eduplat.org</h1>
     <p>Esta es tu nueva contraseña para acceder a Eduplat.org:${password} , una vez hayas accedido de nuevo, puedes cambiarla en cualquier momento desde la página de tu perfil.</p>
-    <p>Vuelve al inicio de sesión <a href="http://localhost:5173/login-page" target="_blank" rel="noopener noreferrer">haciendo clic aquí</a>.</p>
+    <p>Vuelve al inicio de sesión <a href="http://localhost:5173/" target="_blank" rel="noopener noreferrer">haciendo clic aquí</a>.</p>
     <br/>
       <p class='firma'>Equipo de Eduplat.</p>
   </body>

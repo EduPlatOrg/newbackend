@@ -185,6 +185,7 @@ export const logInWithToken = async (req, res) => {
 
 export const logOut = async (req, res) => {
   const { _id } = req.user;
+  console.log(_id, '<--- req.user');
 
   res.clearCookie('token');
 
@@ -212,14 +213,15 @@ export const forgotPassword = async (req, res) => {
       const newPin = randomPinNumber(10);
       const salt = await bcrypt.hash(newPin, 10);
 
-      await User.findOneAndUpdate(
-        { email },
-        { password: salt },
-        { new: true }
-      );
-      sendNewPassword(email, newPin)
+      await User.findOneAndUpdate({ email }, { password: salt }, { new: true });
+      sendNewPassword(email, newPin);
 
-      return res.status(200).json({ success: true, message: 'Recovery mail sent, please check your inbox.' });
+      return res
+        .status(200)
+        .json({
+          success: true,
+          message: 'Recovery mail sent, please check your inbox.',
+        });
     } else {
       return res
         .status(404)
@@ -231,7 +233,7 @@ export const forgotPassword = async (req, res) => {
       .status(500)
       .json({ success: false, message: 'Internal server error.' });
   }
-}
+};
 
 export const resetPassword = async (req, res) => {
   const { newPassword } = req.body;
@@ -242,12 +244,10 @@ export const resetPassword = async (req, res) => {
 
     if (userExists) {
       const salt = await bcrypt.hash(newPassword, 10);
-      await User.findByIdAndUpdate(
-        { _id },
-        { password: salt },
-        { new: true }
-      );
-      return res.status(200).json({ success: true, message: 'Password successfully updated.' });
+      await User.findByIdAndUpdate({ _id }, { password: salt }, { new: true });
+      return res
+        .status(200)
+        .json({ success: true, message: 'Password successfully updated.' });
     } else {
       return res
         .status(404)
@@ -259,7 +259,7 @@ export const resetPassword = async (req, res) => {
       .status(500)
       .json({ success: false, message: 'Internal server error.' });
   }
-}
+};
 
 export const getAllUsers = async (req, res) => {
   const { _id } = req.user;
@@ -267,7 +267,7 @@ export const getAllUsers = async (req, res) => {
     const userExists = await User.findById({ _id });
 
     if (userExists) {
-      const allUsers = await User.find({}, { username: true, isLogged: true })
+      const allUsers = await User.find({}, { username: true, isLogged: true });
       return res.status(200).json({ success: true, _id, allUsers });
     } else {
       return res
@@ -280,6 +280,6 @@ export const getAllUsers = async (req, res) => {
       .status(500)
       .json({ success: false, message: 'Internal server error.' });
   }
-}
+};
 
 //TODO: IMPLEMENTAR , , UPDATE USER( visibilidad de datos personales, profile picture)
