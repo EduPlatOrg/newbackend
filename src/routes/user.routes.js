@@ -11,6 +11,7 @@ import {
   forgotPassword,
   resetPassword,
   getAllUsers,
+  editUser,
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -32,13 +33,15 @@ router.post('/forgotPassword', forgotPassword);
 
 router.use(authRequired);
 
-router.get('/user/logInWithToken', logInWithToken);
 // ! AQUI LAS RUTAS QUE REQUIERAN DE AUTENTICACION
+router.get('/user/logInWithToken', logInWithToken);
 
 router.get('/logout', logOut);
 
 router.get('/getAllUsers', getAllUsers);
 
 router.patch('/resetPassword', resetPassword);
+
+router.patch('/edit-user/:id', editUser);
 
 export default router;
