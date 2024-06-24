@@ -99,7 +99,7 @@ export const verifyEmail = async (req, res) => {
 };
 
 export const verifyUser = async (req, res) => {
-  console.log(req.params.token, '<--- req.params.token');
+  // console.log(req.params.token, '<--- req.params.token');
   try {
     const decodToken = await jwt.verify(
       req.params.token,
@@ -271,4 +271,53 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-//TODO: IMPLEMENTAR , , UPDATE USER( visibilidad de datos personales, profile picture)
+export const editUser = async (req, res) => {
+  // TODO: es necesario pasar el id por parametros?? doble seguridad??
+  const { _id } = req.user;
+  const idParam = req.params.idParam
+  const updatedFields = req.body;
+
+  if (!_id === idParam) return res
+    .status(404)
+    .json({ success: false, message: 'Invalid user' });
+
+
+  try {
+    const { _doc } = await User.findById(_id)
+    const updatedUser = { ..._doc, ...updatedFields }
+
+    // TODO: tiene sentido añadir secureUpdate?? extraer más campos que no queramos actualizar??
+    const { password, ...secureUpdate } = updatedUser;
+    await User.findByIdAndUpdate(_id, secureUpdate, { new: true })
+
+    return res.status(200).json({ success: true, message: 'User successfully updated.', ...updatedFields });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal server error.' });
+  }
+}
+
+export const updateProfilePic = async (req, res) => {
+  // TODO: es necesario pasar el id por parametros?? doble seguridad??
+
+  const { _id } = req.user;
+  const idParam = req.params.idParam
+  const picture = req.body;
+  console.log(picture)
+
+  if (!_id === idParam) return res
+    .status(404)
+    .json({ success: false, message: 'Invalid user' });
+
+  try {
+    await User.findByIdAndUpdate(_id, picture, { new: true })
+    return res.status(200).json({ success: true, message: 'Picture successfully updated.' });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal server error.' });
+  }
+}

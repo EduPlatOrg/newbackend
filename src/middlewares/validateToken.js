@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 
 export const authRequired = (req, res, next) => {
-  console.log(req.cookies, '<-- req.cookies');
+  // console.log(req.cookies, '<-- req.cookies');
   const { token } = req.cookies;
 
   if (!token || token === '')
@@ -12,7 +12,7 @@ export const authRequired = (req, res, next) => {
     if (err) return res.status(403).json({ message: 'No autorizado' });
 
     req.user = user;
-    console.log(req.user, '<-- req.user');
+    // console.log(req.user, '<-- req.user');
 
     next();
   });
