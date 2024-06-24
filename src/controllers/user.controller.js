@@ -132,15 +132,15 @@ export const logInUser = async (req, res) => {
   const { email, password, isLogged } = req.body;
 
   try {
-    // TODO: es correcto actualizar aquí el lastLogin?? o lo hacemos después de comprobar el password?
     const userFound = await User.findOneAndUpdate(
       { email },
-      { isLogged, lastLogin: Date.now() },
+      { isLogged },
       { new: true }
     );
-    // console.log(userFound, '<--- userFound');
+
     if (!userFound) {
       //TODO: VALIDAR MEJOR LOS ERRORES
+
       return res.status(400).send('User not found');
     }
     const isMatch = await bcrypt.compare(password, userFound.password);
@@ -150,6 +150,7 @@ export const logInUser = async (req, res) => {
     if (!userFound.isVerified) {
       return res.status(400).send('User not verified');
     }
+    await User.findByIdAndUpdate(userFound._id, { lastLogin: Date.now() });
     const tokenAccess = await generateTokenAccess({
       _id: userFound._id,
       firstname: userFound.firstname,
@@ -174,7 +175,9 @@ export const logInWithToken = async (req, res) => {
   const { _id } = req.user;
   console.log(req.user, '<--- req.user');
   try {
-    const userFound = await User.findByIdAndUpdate(_id, { lastLogin: Date.now() });
+    const userFound = await User.findByIdAndUpdate(_id, {
+      lastLogin: Date.now(),
+    });
     if (!userFound) {
       return res.status(400).send('User not found');
     }
@@ -206,9 +209,10 @@ export const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   try {
-    if (!email || email.length < 3) return res
-      .status(404)
-      .json({ success: false, message: 'Email not found.' });
+    if (!email || email.length < 3)
+      return res
+        .status(404)
+        .json({ success: false, message: 'Email not found.' });
 
     const newPin = randomPinNumber(10);
     const salt = await bcrypt.hash(newPin, 10);
@@ -219,7 +223,6 @@ export const forgotPassword = async (req, res) => {
       success: true,
       message: 'Recovery mail sent, please check your inbox.',
     });
-
   } catch (error) {
     console.error(error);
     return res
@@ -232,13 +235,13 @@ export const resetPassword = async (req, res) => {
   const { newPassword } = req.body;
   const { _id } = req.user;
 
-  if (!newPassword || newPassword.length < 8) return res
-    .status(404)
-    .json({ success: false, message: 'Invalid password' });
+  if (!newPassword || newPassword.length < 8)
+    return res
+      .status(404)
+      .json({ success: false, message: 'Invalid password' });
 
-  if (!_id) return res
-    .status(404)
-    .json({ success: false, message: 'Invalid user' });
+  if (!_id)
+    return res.status(404).json({ success: false, message: 'Invalid user' });
 
   try {
     const salt = await bcrypt.hash(newPassword, 10);
@@ -256,9 +259,8 @@ export const resetPassword = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   const { _id } = req.user;
-  if (!_id) return res
-    .status(404)
-    .json({ success: false, message: 'Invalid user' });
+  if (!_id)
+    return res.status(404).json({ success: false, message: 'Invalid user' });
 
   try {
     const allUsers = await User.find({}, { username: true, isLogged: true });
@@ -274,27 +276,31 @@ export const getAllUsers = async (req, res) => {
 export const editUser = async (req, res) => {
   // TODO: es necesario pasar el id por parametros?? doble seguridad??
   const { _id } = req.user;
-  const idParam = req.params.idParam
+  const idParam = req.params.idParam;
   const updatedFields = req.body;
 
-  if (!_id === idParam) return res
-    .status(404)
-    .json({ success: false, message: 'Invalid user' });
-
+  if (!_id === idParam)
+    return res.status(404).json({ success: false, message: 'Invalid user' });
 
   try {
-    const { _doc } = await User.findById(_id)
-    const updatedUser = { ..._doc, ...updatedFields }
+    const { _doc } = await User.findById(_id);
+    const updatedUser = { ..._doc, ...updatedFields };
 
     // TODO: tiene sentido añadir secureUpdate?? extraer más campos que no queramos actualizar??
     const { password, ...secureUpdate } = updatedUser;
-    await User.findByIdAndUpdate(_id, secureUpdate, { new: true })
+    await User.findByIdAndUpdate(_id, secureUpdate, { new: true });
 
-    return res.status(200).json({ success: true, message: 'User successfully updated.', ...updatedFields });
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message: 'User successfully updated.',
+        ...updatedFields,
+      });
   } catch (error) {
     console.error(error);
     return res
       .status(500)
       .json({ success: false, message: 'Internal server error.' });
   }
-}
+};
