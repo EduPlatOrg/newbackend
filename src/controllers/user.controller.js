@@ -284,19 +284,18 @@ export const editUser = async (req, res) => {
 
   try {
     const { _doc } = await User.findById(_id);
+
     const updatedUser = { ..._doc, ...updatedFields };
 
     // TODO: tiene sentido añadir secureUpdate?? extraer más campos que no queramos actualizar??
     const { password, ...secureUpdate } = updatedUser;
     await User.findByIdAndUpdate(_id, secureUpdate, { new: true });
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: 'User successfully updated.',
-        ...updatedFields,
-      });
+    return res.status(200).json({
+      success: true,
+      message: 'User successfully updated.',
+      ...updatedFields,
+    });
   } catch (error) {
     console.error(error);
     return res
