@@ -50,10 +50,6 @@ const userScheme = mongoose.Schema({
     default:
       'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png',
   },
-  phone: {
-    type: String,
-    maxLenght: 20,
-  },
   palette: {
     key: {
       type: Number,
