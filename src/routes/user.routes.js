@@ -12,7 +12,6 @@ import {
   resetPassword,
   getAllUsers,
   editUser,
-  updateProfilePic,
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -44,7 +43,5 @@ router.get('/getAllUsers', getAllUsers);
 router.patch('/resetPassword', resetPassword);
 
 router.patch('/edit-user/:id', editUser);
-
-router.patch('/profile-pic/:id', updateProfilePic);
 
 export default router;

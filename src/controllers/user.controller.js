@@ -298,26 +298,3 @@ export const editUser = async (req, res) => {
       .json({ success: false, message: 'Internal server error.' });
   }
 }
-
-export const updateProfilePic = async (req, res) => {
-  // TODO: es necesario pasar el id por parametros?? doble seguridad??
-
-  const { _id } = req.user;
-  const idParam = req.params.idParam
-  const picture = req.body;
-  console.log(picture)
-
-  if (!_id === idParam) return res
-    .status(404)
-    .json({ success: false, message: 'Invalid user' });
-
-  try {
-    await User.findByIdAndUpdate(_id, picture, { new: true })
-    return res.status(200).json({ success: true, message: 'Picture successfully updated.' });
-  } catch (error) {
-    console.error(error);
-    return res
-      .status(500)
-      .json({ success: false, message: 'Internal server error.' });
-  }
-}
