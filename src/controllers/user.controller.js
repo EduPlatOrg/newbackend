@@ -274,7 +274,6 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const editUser = async (req, res) => {
-  // TODO: es necesario pasar el id por parametros?? doble seguridad??
   const { _id } = req.user;
   const idParam = req.params.idParam;
   const updatedFields = req.body;
@@ -284,10 +283,7 @@ export const editUser = async (req, res) => {
 
   try {
     const { _doc } = await User.findById(_id);
-
     const updatedUser = { ..._doc, ...updatedFields };
-
-    // TODO: tiene sentido añadir secureUpdate?? extraer más campos que no queramos actualizar??
     const { password, ...secureUpdate } = updatedUser;
     await User.findByIdAndUpdate(_id, secureUpdate, { new: true });
 
