@@ -23,8 +23,8 @@ export const registerUser = async (req, res) => {
       isVerified: false,
       favorites: [],
       emails: [{ emailUrl: email, emailDescription: 'Home' }],
-      phones: [{ phoneNumber: '', phoneDescription: 'Home' }],
-      social: [{ media: 'Facebook', user: '@' }],
+      phones: [{ phoneNumber: '', phoneDescription: '' }],
+      social: [{ media: '', user: '' }],
       address: {
         streetaddress: '',
         city: '',
@@ -109,7 +109,6 @@ export const verifyUser = async (req, res) => {
     if (!decodToken || !decodToken._id) {
       return res.status(400).send('Token is invalid');
     }
-    console.log('LLEGO AQUI ++++++++++++++++++++++++++');
     const userFound = await User.findByIdAndUpdate(
       decodToken._id,
       {
@@ -117,7 +116,7 @@ export const verifyUser = async (req, res) => {
       },
       { new: true }
     );
-    console.log(userFound, '<--- userFound ***************');
+    // console.log(userFound, '<--- userFound ***************');
     if (!userFound) {
       return res.status(400).json({ msg: 'User not found' });
     }
@@ -133,9 +132,10 @@ export const logInUser = async (req, res) => {
   const { email, password, isLogged } = req.body;
 
   try {
+    // TODO: es correcto actualizar aquí el lastLogin?? o lo hacemos después de comprobar el password?
     const userFound = await User.findOneAndUpdate(
       { email },
-      { isLogged },
+      { isLogged, lastLogin: Date.now() },
       { new: true }
     );
     // console.log(userFound, '<--- userFound');
@@ -174,7 +174,7 @@ export const logInWithToken = async (req, res) => {
   const { _id } = req.user;
   console.log(req.user, '<--- req.user');
   try {
-    const userFound = await User.findById(_id);
+    const userFound = await User.findByIdAndUpdate(_id, { lastLogin: Date.now() });
     if (!userFound) {
       return res.status(400).send('User not found');
     }
@@ -187,8 +187,6 @@ export const logInWithToken = async (req, res) => {
 
 export const logOut = async (req, res) => {
   const { _id } = req.user;
-  console.log(_id, '<--- req.user');
-
   res.clearCookie('token');
 
   try {
@@ -206,27 +204,22 @@ export const logOut = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
-  if (!email || email.length < 3) return;
 
   try {
-    const userExists = await User.findOne({ email });
+    if (!email || email.length < 3) return res
+      .status(404)
+      .json({ success: false, message: 'Email not found.' });
 
-    if (userExists) {
-      const newPin = randomPinNumber(10);
-      const salt = await bcrypt.hash(newPin, 10);
+    const newPin = randomPinNumber(10);
+    const salt = await bcrypt.hash(newPin, 10);
+    await User.findOneAndUpdate({ email }, { password: salt }, { new: true });
+    sendNewPassword(email, newPin);
 
-      await User.findOneAndUpdate({ email }, { password: salt }, { new: true });
-      sendNewPassword(email, newPin);
+    return res.status(200).json({
+      success: true,
+      message: 'Recovery mail sent, please check your inbox.',
+    });
 
-      return res.status(200).json({
-        success: true,
-        message: 'Recovery mail sent, please check your inbox.',
-      });
-    } else {
-      return res
-        .status(404)
-        .json({ success: false, message: 'Email not found.' });
-    }
   } catch (error) {
     console.error(error);
     return res
@@ -239,20 +232,20 @@ export const resetPassword = async (req, res) => {
   const { newPassword } = req.body;
   const { _id } = req.user;
 
-  try {
-    const userExists = await User.findById({ _id });
+  if (!newPassword || newPassword.length < 8) return res
+    .status(404)
+    .json({ success: false, message: 'Invalid password' });
 
-    if (userExists) {
-      const salt = await bcrypt.hash(newPassword, 10);
-      await User.findByIdAndUpdate({ _id }, { password: salt }, { new: true });
-      return res
-        .status(200)
-        .json({ success: true, message: 'Password successfully updated.' });
-    } else {
-      return res
-        .status(404)
-        .json({ success: false, message: 'User not found.' });
-    }
+  if (!_id) return res
+    .status(404)
+    .json({ success: false, message: 'Invalid user' });
+
+  try {
+    const salt = await bcrypt.hash(newPassword, 10);
+    await User.findByIdAndUpdate({ _id }, { password: salt }, { new: true });
+    return res
+      .status(200)
+      .json({ success: true, message: 'Password successfully updated.' });
   } catch (error) {
     console.error(error);
     return res
@@ -263,17 +256,13 @@ export const resetPassword = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   const { _id } = req.user;
-  try {
-    const userExists = await User.findById({ _id });
+  if (!_id) return res
+    .status(404)
+    .json({ success: false, message: 'Invalid user' });
 
-    if (userExists) {
-      const allUsers = await User.find({}, { username: true, isLogged: true });
-      return res.status(200).json({ success: true, _id, allUsers });
-    } else {
-      return res
-        .status(404)
-        .json({ success: false, message: 'User not found.' });
-    }
+  try {
+    const allUsers = await User.find({}, { username: true, isLogged: true });
+    return res.status(200).json({ success: true, _id, allUsers });
   } catch (error) {
     console.error(error);
     return res

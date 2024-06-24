@@ -32,8 +32,8 @@ router.post('/forgotPassword', forgotPassword);
 
 router.use(authRequired);
 
-router.get('/user/logInWithToken', logInWithToken);
 // ! AQUI LAS RUTAS QUE REQUIERAN DE AUTENTICACION
+router.get('/user/logInWithToken', logInWithToken);
 
 router.get('/logout', logOut);
 
