@@ -232,10 +232,10 @@ export const forgotPassword = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-  const { newPassword } = req.body;
+  const {  password } = req.body;
   const { _id } = req.user;
 
-  if (!newPassword || newPassword.length < 8)
+  if (!password || password.length < 8)
     return res
       .status(404)
       .json({ success: false, message: 'Invalid password' });
@@ -244,7 +244,7 @@ export const resetPassword = async (req, res) => {
     return res.status(404).json({ success: false, message: 'Invalid user' });
 
   try {
-    const salt = await bcrypt.hash(newPassword, 10);
+    const salt = await bcrypt.hash(password, 10);
     await User.findByIdAndUpdate({ _id }, { password: salt }, { new: true });
     return res
       .status(200)
