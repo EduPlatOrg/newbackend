@@ -1,9 +1,10 @@
-import { sendSupportMail } from "../services/mailing.js";
+import { sendSupportMail, sendSupportMailConfirmation } from "../services/mailing.js";
 
 export const supportMail = async (req, res) => {
-    const { sender, subject, message } = req.body
+    const { name, surname, email, subject, message } = req.body
     try {
-        await sendSupportMail(sender, subject, message)
+        await sendSupportMail(name, surname, email, subject, message);
+        await sendSupportMailConfirmation(name, surname, email, subject, message);
         res.status(200).json({
             success: true,
             message: 'Email sent.',
@@ -12,7 +13,7 @@ export const supportMail = async (req, res) => {
         console.log(error, '<--- ERROR');
         res.status(500).json({
             success: false,
-            message: 'Error sending suppor email. Please try again.',
+            message: 'Error sending support email. Please try again.',
         });
     }
 }
