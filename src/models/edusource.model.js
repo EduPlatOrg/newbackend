@@ -6,12 +6,12 @@ const edusourceScheme = mongoose.Schema({
     maxLenght: 50,
     required: true,
   },
-  resourceURL: {
+  externalLink: {
     type: String,
     maxLenght: 100,
     required: true,
   },
-  promoterId: {
+  creatorId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'User',
@@ -50,7 +50,7 @@ const edusourceScheme = mongoose.Schema({
     required: true,
   },
 
-  type: {
+  subDicipline: {
     type: String,
     maxLenght: 50,
   },
@@ -58,28 +58,15 @@ const edusourceScheme = mongoose.Schema({
     type: String,
     maxLenght: 50,
   },
-  linktype: {
-    type: String,
-    maxLenght: 50,
-  },
+
   description: {
     type: String,
   },
-  picture: {
-    fileName: {
-      type: String,
-      required: false,
-    },
-
-    uploadTime: {
-      type: Date,
-      default: Date.now,
-    },
-    type: {
-      type: String,
-      maxLenght: 20,
-    },
+  image: {
+    type: String,
+    required: false,
   },
+
   licence: {
     type: String,
     maxLenght: 50,
@@ -117,3 +104,17 @@ const edusourceScheme = mongoose.Schema({
 });
 
 export default mongoose.model('Edusource', edusourceScheme);
+
+// alvaro serra
+// 18:52
+// Lista de categorias eduplat.
+// Artes
+// TICS    Informática  Tecnología      TICS    TEPS TRICS
+// Lenguas     - Idiomas- literatura
+// Matemáticas
+// Ciencias Naturales
+// Ciencias Sociales
+// Salud–     NB Educación Física. Educación mental
+// Psicopedagogía- Orientación Educativa — psicopedagogía, pedagogía, funciones ejecutivas, orientación, ESE, inclusión, evaluación, metodologías activas
+// Varias categorías
+// Otras Categorías
