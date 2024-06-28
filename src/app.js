@@ -11,6 +11,7 @@ import edusourceRouter from './routes/edusource.routes.js';
 import conversationRouter from './routes/conversation.routes.js';
 import collectionRouter from './routes/collection.routes.js';
 import mailingRouter from './routes/mailing.routes.js';
+import eventRouter from './routes/event.routes.js';
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -47,6 +48,7 @@ app.use('/v1/edusource', edusourceRouter);
 app.use('/v1/conversation', conversationRouter);
 app.use('/v1/collection', collectionRouter);
 app.use('/v1/contact', mailingRouter);
+app.use('/v1/events', eventRouter);
 
 connectDB();
 
