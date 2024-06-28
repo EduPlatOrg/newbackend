@@ -9,12 +9,12 @@ const eventScheme = mongoose.Schema({
     },
     description: {
         type: String,
-        maxLenght:500,//?
+        maxLenght: 500,//?
         required: true,
     },
     youtubeUrl: {
         type: String,
-        maxLenght:100,
+        maxLenght: 100,
     },
     mainImage: {
         type: String,
@@ -56,24 +56,24 @@ const eventScheme = mongoose.Schema({
     address: {
         streetaddress: {
             type: String,
-            maxLenght:100,
+            maxLenght: 100,
         },
         city: {
             type: String,
-            maxLenght:50,
+            maxLenght: 50,
         },
         state: {
             type: String,
-            maxLenght:50,
+            maxLenght: 50,
         },
         postalCode: {
             type: Number,
         },
         country: {
             type: String,
-            maxLenght:50,
+            maxLenght: 50,
         },
-      },
+    },
     price: {
         type: String
     },

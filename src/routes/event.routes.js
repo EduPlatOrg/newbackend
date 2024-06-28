@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { deleteEvent, editEvent, getEventById, getNextEvents, newEvent } from '../controllers/event.controller.js';
+import { deleteEvent, editEvent, getEventById, getAllEvents, newEvent } from '../controllers/event.controller.js';
 import { authRequired } from '../middlewares/validateToken.js';
 
 const router = Router();
@@ -7,7 +7,7 @@ const router = Router();
 // ! AQUI LAS RUTAS QUE NO REQUIRAN DE AUTENTICACION
 router.get('/getEventById/:id', getEventById);
 
-router.get('/getNextEvents', getNextEvents);
+router.get('/all', getAllEvents);
 
 
 router.use(authRequired);
