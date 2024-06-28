@@ -19,5 +19,4 @@ router.patch('/editEvent/:id', editEvent);
 
 router.delete('/deleteEvent/:id', deleteEvent);
 
-
 export default router;
