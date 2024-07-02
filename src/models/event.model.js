@@ -90,7 +90,7 @@ const eventScheme = mongoose.Schema({
     default: Date.now,
   },
   creatorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  edditedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  editedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 });
 
 eventScheme.index({ '$**': 'text' });
