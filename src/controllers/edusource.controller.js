@@ -1,25 +1,158 @@
+import User from '../models/user.model.js';
+import Edusource from "../models/edusource.model.js";
 
-// TODO: añadir funcion 
+
 export const getEdusourceById = async (req, res) => {
-    res.send('getEdusourceById')
+    const { id } = req.params
+    if (!id) return res.status(404).json({
+        success: false, message: 'Invalid request'
+    });
+
+    try {
+        const edusource = await Edusource.findById(id);
+        if (!edusource) return res.status(404).json({
+            success: false,
+            message: 'Edusource not found!'
+        })
+
+        res.status(200).json({
+            success: true,
+            edusource
+        })
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(500)
+            .json({ success: false, message: 'Internal server error.' });
+    }
 }
 
-// TODO: añadir funcion 
 export const getEdusources = async (req, res) => {
-    res.send('getEdusources')
+    // TODO: meter query params y filtrar
+
+    try {
+        const edusources = await Edusource.find({})
+
+        return res.status(200).json({
+            success: true,
+            edusources
+        })
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(500)
+            .json({ success: false, message: 'Internal server error.' });
+    }
 }
 
-// TODO: añadir funcion 
 export const newEdusource = async (req, res) => {
-    res.send('newEdusource')
+    const body = req.body;
+    const { _id } = req.user;
+
+    try {
+        const user = await User.findById(_id);
+        if (!user) return res.status(401).json({
+            success: false,
+            message: 'Unauthorized.'
+        })
+
+        const edusource = new Edusource({
+            ...body,
+            creatorId: _id,
+        });
+        const createdEdusource = await edusource.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Edusource creado correctamente',
+            edusource: createdEdusource._id,
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({
+            success: false,
+            message: 'Error creando Edusource',
+            error
+        });
+    }
+
 }
 
-// TODO: añadir funcion 
+
 export const editEdusource = async (req, res) => {
-    res.send('editEdusource')
+    const { id } = req.params
+    const updatedFields = req.body;
+
+    if (!id) return res.status(404).json({
+        success: false, message: 'Invalid request'
+    });
+
+    const { _id } = req.user;
+    if (!_id) return res.status(400).json({
+        success: false,
+        message: 'Invalid token.'
+    })
+
+    try {
+        // confirmación: solo creador o administrador pueden editar
+        const user = await User.findById(_id);
+        const edusource = await Edusource.findById(id)
+        if (!user || user._id !== edusource.creatorId || !user.isBoss) return res.status(401).json({
+            success: false,
+            message: 'Unauthorized.'
+        })
+
+        await Edusource.findByIdAndUpdate(id, {
+            ...updatedFields
+        }, { new: true })
+        res.status(200).json({
+            success: true,
+            message: 'Edusource editado correctamente',
+            // ...updatedFields
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({
+            success: false,
+            message: 'Error editando Edusource',
+            error
+        });
+    }
 }
 
-// TODO: añadir funcion 
 export const deleteEdusource = async (req, res) => {
-    res.send('deleteEdusource')
+    // todo: ojo no puedo eliminar
+    const { id } = req.params
+    if (!id) return res.status(404).json({
+        success: false, message: 'Invalid request'
+    });
+
+    const { _id } = req.user;
+    if (!_id) return res.status(400).json({
+        success: false,
+        message: 'Invalid token.'
+    })
+
+    try {
+        // confirmación: solo creador o administrador pueden eliminar
+        const user = await User.findById(_id);
+        const edusource = await Edusource.findById(id)
+        if (!user || user._id !== edusource.creatorId || !user.isBoss) return res.status(401).json({
+            success: false,
+            message: 'Unauthorized.'
+        })
+
+        await Edusource.findByIdAndDelete(id);
+        res.status(200).json({
+            success: true,
+            message: 'Edusource eliminado correctamente',
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({
+            success: false,
+            message: 'Error eliminando Edusource',
+            error
+        });
+    }
 }

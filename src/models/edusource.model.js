@@ -76,6 +76,7 @@ const edusourceScheme = mongoose.Schema({
   },
   valorations: [
     {
+      // TODO: cambiar por id de mongo
       senderId: {
         type: String,
         maxLenght: 500,

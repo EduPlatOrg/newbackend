@@ -70,7 +70,7 @@ export const newEvent = async (req, res) => {
 
         const event = new Event({
             ...body,
-            creator: _id,
+            creatorId: _id,
         });
         const createdEvent = await event.save();
 
@@ -109,7 +109,10 @@ export const editEvent = async (req, res) => {
             success: false,
             message: 'Unauthorized.'
         })
-        await Event.findByIdAndUpdate(id, { ...updatedFields }, { new: true });
+        await Event.findByIdAndUpdate(id, {
+            ...updatedFields,
+            editedBy: _id,
+        }, { new: true });
 
         res.status(200).json({
             success: true,
