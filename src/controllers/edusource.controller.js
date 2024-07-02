@@ -1,7 +1,6 @@
 import User from '../models/user.model.js';
 import Edusource from "../models/edusource.model.js";
 
-
 export const getEdusourceById = async (req, res) => {
     const { id } = req.params
     if (!id) return res.status(404).json({
@@ -14,7 +13,6 @@ export const getEdusourceById = async (req, res) => {
             success: false,
             message: 'Edusource not found!'
         })
-
         res.status(200).json({
             success: true,
             edusource
@@ -32,7 +30,6 @@ export const getEdusources = async (req, res) => {
 
     try {
         const edusources = await Edusource.find({})
-
         return res.status(200).json({
             success: true,
             edusources
@@ -61,7 +58,6 @@ export const newEdusource = async (req, res) => {
             creatorId: _id,
         });
         const createdEdusource = await edusource.save();
-
         res.status(200).json({
             success: true,
             message: 'Edusource creado correctamente',
@@ -75,19 +71,16 @@ export const newEdusource = async (req, res) => {
             error
         });
     }
-
 }
 
-
 export const editEdusource = async (req, res) => {
-    const { id } = req.params
     const updatedFields = req.body;
+    const { _id } = req.user;
+    const { id } = req.params
 
     if (!id) return res.status(404).json({
         success: false, message: 'Invalid request'
     });
-
-    const { _id } = req.user;
     if (!_id) return res.status(400).json({
         success: false,
         message: 'Invalid token.'
@@ -96,8 +89,13 @@ export const editEdusource = async (req, res) => {
     try {
         // confirmación: solo creador o administrador pueden editar
         const user = await User.findById(_id);
+        if (!user) return res.status(401).json({
+            success: false,
+            message: 'Unauthorized.'
+        })
+
         const edusource = await Edusource.findById(id)
-        if (!user || user._id !== edusource.creatorId || !user.isBoss) return res.status(401).json({
+        if (user._id.toString() !== edusource.creatorId.toString() && !user.isBoss) return res.status(401).json({
             success: false,
             message: 'Unauthorized.'
         })
@@ -121,23 +119,27 @@ export const editEdusource = async (req, res) => {
 }
 
 export const deleteEdusource = async (req, res) => {
-    // todo: ojo no puedo eliminar
     const { id } = req.params
+    const { _id } = req.user;
+
     if (!id) return res.status(404).json({
         success: false, message: 'Invalid request'
     });
-
-    const { _id } = req.user;
     if (!_id) return res.status(400).json({
         success: false,
         message: 'Invalid token.'
     })
 
     try {
-        // confirmación: solo creador o administrador pueden eliminar
+        // confirmación: solo creador o administrador pueden editar
         const user = await User.findById(_id);
+        if (!user) return res.status(401).json({
+            success: false,
+            message: 'Unauthorized.'
+        })
+
         const edusource = await Edusource.findById(id)
-        if (!user || user._id !== edusource.creatorId || !user.isBoss) return res.status(401).json({
+        if (user._id.toString() !== edusource.creatorId.toString() && !user.isBoss) return res.status(401).json({
             success: false,
             message: 'Unauthorized.'
         })
