@@ -28,11 +28,18 @@ export const getEventById = async (req, res) => {
 }
 
 export const getAllEvents = async (req, res) => {
+    const pastEvents = [];
+    const nextEvents = [];
     try {
         const events = await Event.find({})
+        events.forEach((event) => {
+            if (event.endDate > Date.now()) nextEvents.push(event);
+            else pastEvents.push(event);
+        })
         return res.status(200).json({
             success: true,
-            events
+            pastEvents,
+            nextEvents
         })
     } catch (error) {
         console.error(error);
