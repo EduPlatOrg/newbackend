@@ -16,25 +16,21 @@ const edusourceScheme = mongoose.Schema({
     required: true,
     ref: 'User',
   },
-  autors: [
-    {
-      autorName: {
-        type: String,
-      },
-      autorSocial: [
-        {
-          media: {
-            type: String,
-            maxLenght: 30,
-          },
-          user: {
-            type: String,
-            maxLenght: 30,
-          },
-        },
-      ],
+  autor: {
+    autorName: {
+      type: String,
     },
-  ],
+
+    media: {
+      type: String,
+      maxLenght: 30,
+    },
+    user: {
+      type: String,
+      maxLenght: 30,
+    },
+  },
+
   language: {
     type: String,
     maxLenght: 10,
