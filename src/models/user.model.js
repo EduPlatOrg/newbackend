@@ -155,6 +155,12 @@ const userScheme = mongoose.Schema({
     },
   ],
   favorites: [],
+  edusources: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Edusource',
+    }
+  ],
 });
 
 userScheme.index({ '$**': 'text' });
