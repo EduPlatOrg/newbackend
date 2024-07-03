@@ -83,10 +83,9 @@ const edusourceScheme = mongoose.Schema({
   },
   valorations: [
     {
-      // TODO: cambiar por id de mongo
       senderId: {
-        type: String,
-        maxLenght: 500,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
       },
       value: {
         type: Number,

@@ -26,13 +26,12 @@ export const getEdusourceById = async (req, res) => {
 }
 
 export const getEdusources = async (req, res) => {
-    // TODO: meter query params y filtrar
+    // TODO: meter más query params y filtrar
     // si no hay queryparams devolver todo
     // /all?creatorId=(:id)
     // creatorId
     const query = req.query;
-    console.log(query)
-    
+
 
     try {
         const edusources = await Edusource.find(query)
@@ -64,7 +63,9 @@ export const newEdusource = async (req, res) => {
             creatorId: _id,
         });
         const createdEdusource = await edusource.save();
-        // TODO: añadir id de recurso a ususario.edusources
+        // añadir id de recurso a ususario.edusources
+        user.edusources.push(createdEdusource._id)
+        await user.save()
         res.status(200).json({
             success: true,
             message: 'Edusource creado correctamente',
@@ -152,10 +153,19 @@ export const deleteEdusource = async (req, res) => {
         })
 
         await Edusource.findByIdAndDelete(id);
+        // eliminar id de recurso en usuario.edusources
+        const index = user.edusources.indexOf(id)
+        if (index != -1) {
+            // evitar errores inesperados
+            user.edusources.splice(index, 1);
+            await user.save()
+        }
+
         res.status(200).json({
             success: true,
             message: 'Edusource eliminado correctamente',
         })
+
     } catch (error) {
         console.error(error);
         res.status(400).json({
