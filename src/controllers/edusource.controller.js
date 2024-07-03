@@ -27,6 +27,7 @@ export const getEdusourceById = async (req, res) => {
 
 export const getEdusources = async (req, res) => {
     // TODO: meter query params y filtrar
+    // si no hay queryparams devolver todo
 
     try {
         const edusources = await Edusource.find({})
@@ -99,14 +100,14 @@ export const editEdusource = async (req, res) => {
             success: false,
             message: 'Unauthorized.'
         })
-
-        await Edusource.findByIdAndUpdate(id, {
+        // modificación del recurso
+        const modifiedEdusource = await Edusource.findByIdAndUpdate(id, {
             ...updatedFields
         }, { new: true })
         res.status(200).json({
             success: true,
             message: 'Edusource editado correctamente',
-            // ...updatedFields
+            modifiedEdusource
         })
     } catch (error) {
         console.error(error);
