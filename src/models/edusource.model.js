@@ -44,16 +44,20 @@ const edusourceScheme = mongoose.Schema({
     type: String,
     maxLenght: 10,
   },
-  discipline: {
-    type: String,
-    maxLenght: 50,
-    required: true,
-  },
+  discipline: [
+    {
+      type: String,
+      maxLenght: 50,
+      required: true,
+    },
+  ],
 
-  subDicipline: {
-    type: String,
-    maxLenght: 50,
-  },
+  subDicipline: [
+    {
+      type: String,
+      maxLenght: 50,
+    },
+  ],
   link: {
     type: String,
     maxLenght: 50,
@@ -73,6 +77,9 @@ const edusourceScheme = mongoose.Schema({
   },
   date: {
     type: Date,
+  },
+  pdfDocument: {
+    type: String,
   },
   valorations: [
     {
