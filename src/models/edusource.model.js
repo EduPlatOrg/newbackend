@@ -21,14 +21,16 @@ const edusourceScheme = mongoose.Schema({
       type: String,
     },
 
-    media: {
-      type: String,
-      maxLenght: 30,
-    },
-    user: {
-      type: String,
-      maxLenght: 30,
-    },
+    socials: [
+      {
+      media: {
+        type: String,
+      },
+      user: {
+        type: String,
+        }
+      }
+    ],
   },
 
   language: {
@@ -98,12 +100,17 @@ const edusourceScheme = mongoose.Schema({
         type: Boolean,
         default: false,
       },
-      rejected: {
-        type: Boolean,
-        default: false,
-      },
     },
   ],
+  valorationsAverage: {
+    votes: {
+      type: Number,
+    },
+    average: {
+      type: Number,
+    },
+    // calcular en algún momento la media de los votos aceptados, para ofrecer el típico: 4,5/5 - 438 evaluaciones
+  }
 });
 
 export default mongoose.model('Edusource', edusourceScheme);
