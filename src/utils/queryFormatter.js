@@ -23,9 +23,7 @@ export const queryFormatter = (req) => {
                     break
 
                 case 'text':
-                    // search = { $text: { $search: query[key] } }
-                    console.log(search)
-                    // TODO: añadir busqueda general por texto en todo el documento
+                    search = { $text: { $search: query[key] } }
                     break
 
                 default:

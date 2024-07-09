@@ -23,16 +23,15 @@ const edusourceScheme = mongoose.Schema({
 
     socials: [
       {
-      media: {
-        type: String,
-      },
-      user: {
-        type: String,
+        media: {
+          type: String,
+        },
+        user: {
+          type: String,
         }
       }
     ],
   },
-
   language: {
     type: String,
     maxLenght: 10,
@@ -49,7 +48,6 @@ const edusourceScheme = mongoose.Schema({
       required: true,
     },
   ],
-
   subDicipline: [
     {
       type: String,
@@ -60,7 +58,6 @@ const edusourceScheme = mongoose.Schema({
     type: String,
     maxLenght: 50,
   },
-
   description: {
     type: String,
   },
@@ -68,7 +65,6 @@ const edusourceScheme = mongoose.Schema({
     type: String,
     required: false,
   },
-
   licence: {
     type: String,
     maxLenght: 50,
@@ -112,9 +108,19 @@ const edusourceScheme = mongoose.Schema({
     },
     // calcular en algún momento la media de los votos aceptados, para ofrecer el típico: 4,5/5 - 438 evaluaciones
   }
-});
+}, );
 
-edusourceScheme.index({ '$**': 'text' });
+// edusourceScheme.index({ '$**': 'text' });
+edusourceScheme.index(
+  {
+     "title": "text",
+     "autorName": "text",
+     "user": "text",
+     "subDicipline": "text",
+     "description": "text",
+     "comment": "text",
+  }
+)
 export default mongoose.model('Edusource', edusourceScheme);
 
 // alvaro serra
