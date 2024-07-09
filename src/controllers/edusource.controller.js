@@ -49,7 +49,7 @@ export const getEdusources = async (req, res) => {
                 },
             },
         ])
-        const totalCount = filteredResponse[0].metadata[0].totalCount;
+        const totalCount = filteredResponse[0]?.metadata[0]?.totalCount || 0;
         const totalPages = Math.ceil(totalCount / pageSize);
 
         return res.status(200).json({
