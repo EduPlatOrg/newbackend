@@ -75,6 +75,7 @@ const edusourceScheme = mongoose.Schema({
   },
   date: {
     type: Date,
+    default: Date.now()
   },
   pdfDocument: {
     type: String,
@@ -113,6 +114,7 @@ const edusourceScheme = mongoose.Schema({
   }
 });
 
+edusourceScheme.index({ '$**': 'text' });
 export default mongoose.model('Edusource', edusourceScheme);
 
 // alvaro serra

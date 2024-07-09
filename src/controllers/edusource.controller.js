@@ -41,6 +41,7 @@ export const getEdusources = async (req, res) => {
         const edusources = await Edusource.find(search)
         return res.status(200).json({
             success: true,
+            search,
             edusources,
         })
     } catch (error) {
@@ -93,6 +94,11 @@ export const newEdusource = async (req, res) => {
         // añadir id de recurso a ususario.edusources
         user.edusources.push(createdEdusource._id)
         await user.save()
+
+        // link del recurso
+        createdEdusource.link = `${process.env.BASE_FRONTEND_URL}/recursos-educativos/${createdEdusource._id}`;
+        await createdEdusource.save();
+
         res.status(200).json({
             success: true,
             message: 'Edusource creado correctamente',
