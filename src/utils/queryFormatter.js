@@ -2,6 +2,8 @@ export const queryFormatter = (req) => {
     const primaryFilters = ['creatorId', 'language', 'level']
     const secondaryFilters = ['title', 'discipline', 'description', 'autor', 'valorations']
 
+    // TODO: añadir busqueda general por texto en todo el documento
+
     const search = {}
     const query = req.query;
     const keys = Object.keys(query)
