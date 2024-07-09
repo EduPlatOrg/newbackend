@@ -33,17 +33,34 @@ export const getEdusources = async (req, res) => {
     // TODO: tenemos que definir los niveles que habrá, para ajustar bien los filtros
     // TODO: tenemos que definir la base de valoraciones, sobre 10, sobre 5, y los tipos de números que hay que poner en el modelo y en mongoDB
 
-    // TODO: añadir la paginación
-
     const search = queryFormatter(req)
-    
+    const { page = 1 } = req.query;
+    const pageSize = 10;
+
     try {
-        const edusources = await Edusource.find(search)
+        const filteredResponse = await Edusource.aggregate([
+            {
+                $match: search
+            },
+            {
+                $facet: {
+                    metadata: [{ $count: 'totalCount' }],
+                    data: [{ $skip: (+page - 1) * +pageSize }, { $limit: +pageSize }],
+                },
+            },
+        ])
+        const totalCount = filteredResponse[0].metadata[0].totalCount;
+        const totalPages = Math.ceil(totalCount / pageSize);
+
         return res.status(200).json({
             success: true,
-            search,
-            edusources,
-        })
+            metadata: {
+                totalCount,
+                page,
+                totalPages,
+            },
+            edusources: filteredResponse[0].data,
+        });
     } catch (error) {
         console.error(error);
         return res
@@ -53,8 +70,7 @@ export const getEdusources = async (req, res) => {
 }
 
 
-// TODO: repasar lo siguiente:
-// Buenas paso el modelo de lo que llegara para crear un nuevo recurso
+// ? Modelo de datos enviados por el front a newEdusource
 // {
 //   title: '¿Cómo se usa el microscopio?',
 //   description:
@@ -71,9 +87,6 @@ export const getEdusources = async (req, res) => {
 //   pdfDocument: 'https://res.cloudinary.com/dk2uakyub/image/upload/v1719994133/Microscopio_tqjjre.pdf',
 //   creatorId: '66756960c387d68772bf9063'
 // }
-
-// a esto en el backend hay que agregarle la fecha de creación, que será justo en el momento en el que se grabe en la BD, y hay que crear un link al recurso que será la url del front,
-// process.env.BASE_FRONTEND_URL + ‘/recursos-educativos/‘ + el id del recurso subido en ese momento, esto hay que guardarlo primero y con el id que te devuelve hacer un update con el link
 
 export const newEdusource = async (req, res) => {
     const body = req.body;
@@ -183,8 +196,6 @@ export const deleteEdusource = async (req, res) => {
             message: 'Invalid token.',
         });
 
-
-
     try {
         // confirmación: solo creador o administrador pueden editar
         const user = await User.findById(_id);
@@ -209,12 +220,10 @@ export const deleteEdusource = async (req, res) => {
         }
 
         // evitar errores inesperados
-
         await Edusource.findByIdAndDelete(id);
         // eliminar id de recurso en usuario.edusources
         user.edusources.splice(index, 1);
         await user.save()
-
 
         res.status(200).json({
             success: true,
