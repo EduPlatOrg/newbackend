@@ -34,7 +34,7 @@ const edusourceScheme = mongoose.Schema({
   },
   language: {
     type: String,
-    maxLenght: 20,
+    maxLenght: 10,
     required: true,
   },
   level: {
@@ -110,7 +110,17 @@ const edusourceScheme = mongoose.Schema({
   }
 }, );
 
-edusourceScheme.index({ '$**': 'text' });
+// edusourceScheme.index({ '$**': 'text' });
+edusourceScheme.index(
+  {
+     "title": "text",
+     "autorName": "text",
+     "user": "text",
+     "subDicipline": "text",
+     "description": "text",
+     "comment": "text",
+  }
+)
 export default mongoose.model('Edusource', edusourceScheme);
 
 // alvaro serra
