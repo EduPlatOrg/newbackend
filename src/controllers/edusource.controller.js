@@ -41,6 +41,7 @@ export const getEdusources = async (req, res) => {
         const edusources = await Edusource.find(search)
         return res.status(200).json({
             success: true,
+            search,
             edusources,
         })
     } catch (error) {

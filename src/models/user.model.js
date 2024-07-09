@@ -164,5 +164,4 @@ const userScheme = mongoose.Schema({
 });
 
 userScheme.index({ '$**': 'text' });
-
 export default mongoose.model('User', userScheme);
