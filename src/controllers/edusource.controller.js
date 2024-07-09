@@ -1,6 +1,7 @@
 import User from '../models/user.model.js';
 import Edusource from '../models/edusource.model.js';
 import { queryFormatter } from '../utils/queryFormatter.js';
+import { validateEdusource } from '../utils/validateEdusource.js';
 
 export const getEdusourceById = async (req, res) => {
     const { id } = req.params;
@@ -30,7 +31,7 @@ export const getEdusourceById = async (req, res) => {
 };
 
 export const getEdusources = async (req, res) => {
-    // TODO: tenemos que definir los niveles que habrá, para ajustar bien los filtros
+    
     // TODO: tenemos que definir la base de valoraciones, sobre 10, sobre 5, y los tipos de números que hay que poner en el modelo y en mongoDB
 
     const search = queryFormatter(req)
@@ -92,7 +93,13 @@ export const newEdusource = async (req, res) => {
     const body = req.body;
     const { _id } = req.user;
 
+    const validated = validateEdusource(body)
+    if (!validated) return res.status(400).json({
+        success: false,
+        message: 'Invalid data.'
+    })
     try {
+
         const user = await User.findById(_id);
         if (!user) return res.status(401).json({
             success: false,
@@ -142,6 +149,12 @@ export const editEdusource = async (req, res) => {
             success: false,
             message: 'Invalid token.',
         });
+
+    const validated = validateEdusource(body)
+    if (!validated) return res.status(400).json({
+        success: false,
+        message: 'Invalid data.'
+    })
 
     try {
         // confirmación: solo creador o administrador pueden editar
