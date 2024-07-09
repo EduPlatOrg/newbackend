@@ -1,5 +1,3 @@
-// TODO: añadir busqueda general por texto en todo el documento
-
 import mongoose from 'mongoose';
 
 export const queryFormatter = (req) => {
@@ -8,9 +6,6 @@ export const queryFormatter = (req) => {
     let search = {}
     const query = req.query;
     const keys = Object.keys(query)
-
-
-
 
     keys.forEach((key) => {
         if (allowedFilters.includes(key)) {
@@ -30,7 +25,7 @@ export const queryFormatter = (req) => {
                 case 'text':
                     // search = { $text: { $search: query[key] } }
                     console.log(search)
-                    
+                    // TODO: añadir busqueda general por texto en todo el documento
                     break
 
                 default:
