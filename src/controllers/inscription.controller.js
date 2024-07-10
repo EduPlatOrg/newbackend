@@ -19,9 +19,11 @@ export const getInscriptionsByUserId = async (req, res) => {
     );
 }
 export const newInscription = async (req, res) => {
-    return res.status(404).json(
+    console.log(req)
+    
+    return res.status(200).json(
         {
-            success: false,
+            success: true,
             message: 'Method not implemented',
             req,
         }
