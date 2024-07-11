@@ -35,7 +35,7 @@ const edusourceScheme = mongoose.Schema({
     ],
   },
 
-  language: {
+  lang : {
     type: String,
     maxLenght: 10,
     required: true,

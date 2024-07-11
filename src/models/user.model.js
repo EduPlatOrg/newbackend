@@ -94,7 +94,7 @@ const userScheme = mongoose.Schema({
     default: Date.now,
   },
  
-  language: {
+  lang: {
     type: String,
     maxLenght: 6,
     default: 'es',
