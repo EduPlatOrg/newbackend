@@ -1,4 +1,4 @@
-export const randomPinNumber = (length) => {
+export const randomPinNumber = (length=8) => {
   let pin = '';
 
   for (let i = 0; i < length; i++) {
