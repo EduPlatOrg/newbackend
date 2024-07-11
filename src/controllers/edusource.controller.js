@@ -32,7 +32,9 @@ export const getEdusourceById = async (req, res) => {
 
 export const getEdusources = async (req, res) => {
     
-    // TODO: tenemos que definir la base de valoraciones, sobre 10, sobre 5, y los tipos de números que hay que poner en el modelo y en mongoDB
+    // TODO: tenemos que definir la base de valoraciones, sobre 5, y los tipos de números que hay que poner en el modelo y en mongoDB
+
+    // TODO: ordenar siempre por valoraciones
 
     const search = queryFormatter(req)
     const { page = 1 } = req.query;

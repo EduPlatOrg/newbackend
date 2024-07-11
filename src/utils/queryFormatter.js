@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 export const queryFormatter = (req) => {
-    const allowedFilters = ['creatorId', 'title', 'discipline', 'description', 'autor', 'valorations', 'language', 'level', 'text']
+    const allowedFilters = [ 'title', 'discipline', 'description', 'autor', 'valorations', 'language', 'level', 'text']
 
     let search = {}
     const query = req.query;
@@ -10,9 +10,14 @@ export const queryFormatter = (req) => {
     keys.forEach((key) => {
         if (allowedFilters.includes(key)) {
 
+            // TODO: validar que si viene el key pero está vacío o undefined no haga filtro o null
+
+            // TODO: filtrar por range en lugar de level
+
+            // TODO: quitar busqueda por valoración y meter orden de valoracion por defecto
+
+
             switch (key) {
-                case 'creatorId': search[key] = mongoose.Types.ObjectId.createFromHexString(query['creatorId'])
-                    break
 
                 case 'valorations':
                     search['valorationsAverage.average'] = { $gte: +`${query[key]}` }

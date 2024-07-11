@@ -1,20 +1,33 @@
 export const validateEdusource = (body) => {
-  const langsSupported = ['es', 'de', 'it', 'en', 'fr', 'pt', 'other']
-  const disciplinesSupported = ['artes', 'tics', 'lengua', 'matematicas', 'ciencias-naturales', 'ciencias-sociales', 'salud', 'psicopedagogia', 'otras'];
-  const levelsSupported = ['basico', 'intermedio', 'avanzado']
-  const range = [ 0, 18 ]
+  const { language, discipline, range } = body;
 
-  const { language, level, discipline } = body;
-  
+  const langsSupported = ['es', 'de', 'it', 'en', 'fr', 'pt', 'other']
+  const [minRangeSupported, maxRangeSupported] = [0, 18]
+  const disciplinesSupported = ['artes', 'tics', 'lengua', 'matematicas', 'ciencias-naturales', 'ciencias-sociales', 'salud', 'psicopedagogia', 'otras'];
+
   // establecer filtro
   let response = {}
-  language ? response.language = false : ''
-  level ? response.level = false : ''
-  discipline ? response.discipline = false : ''
 
-  if (language && langsSupported.includes(language.toLowerCase())) response.language = true;
-  if (level && levelsSupported.includes(level.toLowerCase())) response.level = true;
-  if (discipline && disciplinesSupported.includes(discipline.toLowerCase())) response.discipline = true;
+  if (language) {
+    response.language = false;
+    if (langsSupported.includes(language.toLowerCase())) response.language = true;
+  }
+
+  if (discipline) {
+    response.discipline = false;
+    if (disciplinesSupported.includes(discipline.toLowerCase())) response.discipline = true;
+  }
+
+  if (range) {
+    response.range = false;
+    let validArray = [false, false, false];
+    for (let i = 0; i < validArray.length; i++) {
+      if (minRangeSupported <= range[i] <= maxRangeSupported) {
+        validArray[i] = true;
+      }
+    }
+    if (validArray.every(e => e === true)) response.range = true;
+  }
 
   for (let key in response) {
     if (!response[key]) return false
