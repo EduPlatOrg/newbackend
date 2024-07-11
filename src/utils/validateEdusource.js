@@ -1,7 +1,8 @@
 export const validateEdusource = (body) => {
   const langsSupported = ['es', 'de', 'it', 'en', 'fr', 'pt', 'other']
   const disciplinesSupported = ['artes', 'tics', 'lengua', 'matematicas', 'ciencias-naturales', 'ciencias-sociales', 'salud', 'psicopedagogia', 'otras'];
-  const levelsSupported = [1, 2, 3]
+  const levelsSupported = ['basico', 'intermedio', 'avanzado']
+  const range = [ 0, 18 ]
 
   const { language, level, discipline } = body;
   

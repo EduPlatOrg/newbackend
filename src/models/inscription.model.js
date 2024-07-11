@@ -16,16 +16,18 @@ const inscriptionScheme = mongoose.Schema({
     },
     inPersonApplication: {
         type: Boolean,
-        default: false,
     },
     premiumApplication: {
         type: Boolean,
-        default: false,
     },
-    pleaseContact: {
+    shareResources: {
+        type: Boolean,
+    },
+    proccessed: {
         type: Boolean,
         default: false,
     },
+    
 })
 
 // TODO: añadir index adecuado??

@@ -41,13 +41,12 @@ const edusourceScheme = mongoose.Schema({
     type: String,
     maxLenght: 10,
   },
-  discipline: [
+  discipline: 
     {
       type: String,
       maxLenght: 50,
       required: true,
     },
-  ],
   subDicipline: [
     {
       type: String,
