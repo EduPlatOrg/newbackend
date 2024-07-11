@@ -36,9 +36,8 @@ const userScheme = mongoose.Schema({
     minlenght: 8,
     maxlenght: 100,
   },
-  tagline: {
+  bio: {
     type: String,
-    maxlenght: 340,
     default: '',
   },
   karma: {
@@ -117,7 +116,7 @@ const userScheme = mongoose.Schema({
   language: {
     type: String,
     maxLenght: 6,
-    default: 'ES',
+    default: 'es',
   },
   isLogged: {
     type: Boolean,

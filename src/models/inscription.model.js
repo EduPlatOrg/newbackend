@@ -22,6 +22,10 @@ const inscriptionScheme = mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    pleaseContact: {
+        type: Boolean,
+        default: false,
+    },
 })
 
 // TODO: añadir index adecuado??
