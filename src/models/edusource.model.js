@@ -35,6 +35,11 @@ const edusourceScheme = mongoose.Schema({
     ],
   },
 
+  isVisible: {
+    type: Boolean,
+    default: false,
+  },
+  
   lang : {
     type: String,
     maxLenght: 10,

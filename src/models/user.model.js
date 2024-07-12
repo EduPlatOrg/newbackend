@@ -71,7 +71,6 @@ const userScheme = mongoose.Schema({
 
   isVerified: {
     type: Boolean,
-    required: true,
     default: false,
   },
 
@@ -109,7 +108,7 @@ const userScheme = mongoose.Schema({
     type: Boolean,
     default: false,
   },
- 
+
   valorations: [
     {
       senderId: {
