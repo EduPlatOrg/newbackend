@@ -7,22 +7,26 @@ const userScheme = mongoose.Schema({
     required: true,
     unique: true,
   },
+
   email: {
     type: String,
     maxLenght: 50,
     required: true,
     unique: true,
   },
+
   firstname: {
     type: String,
     maxlenght: 50,
     required: true,
   },
+
   lastname: {
     type: String,
     maxlenght: 50,
     required: true,
   },
+
   publicData: {
     name: { type: Boolean, default: true },
     emails: { type: Boolean, default: true },
@@ -31,55 +35,27 @@ const userScheme = mongoose.Schema({
     social: { type: Boolean, default: true },
     lastLogin: { type: Boolean, default: true },
   },
+
   password: {
     type: String,
     minlenght: 8,
     maxlenght: 100,
   },
+
   bio: {
     type: String,
     default: '',
   },
+
   karma: {
     type: Number,
     default: 0,
   },
+
   picture: {
     type: String,
     default:
       'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png',
-  },
-  palette: {
-    key: {
-      type: Number,
-      default: 0,
-    },
-    pictureHeader: {
-      type: String,
-      required: false,
-      default:
-        'https://images.unsplash.com/photo-1540228232483-1b64a7024923?ixlib=rb-1.2.1&auto=format&fit=crop&w=967&q=80',
-    },
-    primaryColor: {
-      type: String,
-      maxLenght: 10,
-      default: '#231e39',
-    },
-    secondaryColor: {
-      type: String,
-      maxLenght: 10,
-      default: '#b3b8cd',
-    },
-    primaryText: {
-      type: String,
-      maxLenght: 10,
-      default: '#b3b8cd',
-    },
-    secondaryText: {
-      type: String,
-      maxLenght: 10,
-      default: '#1f1a32',
-    },
   },
 
   job: {
@@ -95,7 +71,6 @@ const userScheme = mongoose.Schema({
 
   isVerified: {
     type: Boolean,
-    required: true,
     default: false,
   },
 
@@ -106,26 +81,34 @@ const userScheme = mongoose.Schema({
   },
 
   emails: [],
+
   address: [],
+
   phones: [],
+
   social: [],
+
   lastLogin: {
     type: Date,
     default: Date.now,
   },
-  language: {
+ 
+  lang: {
     type: String,
     maxLenght: 6,
     default: 'es',
   },
+ 
   isLogged: {
     type: Boolean,
     default: false,
   },
+ 
   isBoss: {
     type: Boolean,
     default: false,
   },
+
   valorations: [
     {
       senderId: {
@@ -153,7 +136,9 @@ const userScheme = mongoose.Schema({
       },
     },
   ],
+ 
   favorites: [],
+  
   edusources: [
     {
       type: mongoose.Schema.Types.ObjectId,

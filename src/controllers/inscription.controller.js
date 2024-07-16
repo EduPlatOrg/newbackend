@@ -45,11 +45,14 @@ export const newInscription = async (req, res) => {
             const newUser = await createdUser.save();
             const tokenAccess = await generateTokenAccess({ _id: newUser._id });
             sendEmailVerification(email, tokenAccess);
-            sendNewPassword(email, newPin);
+            sendNewPassword(email, pin);
 
             user = { ...newUser };
             // para tener después el id
         }
+
+        // TODO: añadir inscripcion al usuario
+        // TODO: añadir usuario inscrito al evento freeonline
 
         // Lógica de inscripción - aquí tenemos user y event
         const inscription = new Inscription({
@@ -84,16 +87,20 @@ export const getInscriptionsByEventId = async (req, res) => {
         }
     );
 }
-export const getInscriptionsByUserId = async (req, res) => {
-    return res.status(404).json(
-        {
-            success: false,
-            message: 'Method not implemented',
-            body: req.body,
-        }
-    );
-}
+
+// export const getEmailsFromEventByEventId = async....
+
+
 export const deleteInscription = async (req, res) => {
+    // autenticar usuario o admin
+    // buscar inscripcion en usuario
+
+    // quitar id de inscripcion en array de eventos
+    
+    // comprobar si esta procesada. si no, eliminar solo de freeonline
+    // buscar en todas las inscripciones del evento y eliminar
+    // borrar inscripcion
+
     return res.status(404).json(
         {
             success: false,
@@ -103,6 +110,10 @@ export const deleteInscription = async (req, res) => {
     );
 }
 export const editInscription = async (req, res) => {
+    // autenticar SOLO admin
+
+    // solo si no esta procesada
+
     return res.status(404).json(
         {
             success: false,

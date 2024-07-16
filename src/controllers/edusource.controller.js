@@ -31,18 +31,22 @@ export const getEdusourceById = async (req, res) => {
 };
 
 export const getEdusources = async (req, res) => {
-    
-    // TODO: tenemos que definir la base de valoraciones, sobre 10, sobre 5, y los tipos de números que hay que poner en el modelo y en mongoDB
 
-    const search = queryFormatter(req)
-    const { page = 1 } = req.query;
+    // TODO: ordenar siempre por valoraciones - error??
+
     const pageSize = 10;
+    const search = queryFormatter(req)
+    let { page } = req.query;
 
+    if (page) page = +page
+    else page = 1;
+    
     try {
         const filteredResponse = await Edusource.aggregate([
             {
                 $match: search
             },
+            // { $sort: { valorationsAverage[average]: -1 } },
             {
                 $facet: {
                     metadata: [{ $count: 'totalCount' }],
@@ -92,6 +96,8 @@ export const getEdusources = async (req, res) => {
 export const newEdusource = async (req, res) => {
     const body = req.body;
     const { _id } = req.user;
+
+    // TODO: enviar correo en el primer recurso a moderador
 
     const validated = validateEdusource(body)
     if (!validated) return res.status(400).json({

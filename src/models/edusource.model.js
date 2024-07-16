@@ -6,21 +6,23 @@ const edusourceScheme = mongoose.Schema({
     maxLenght: 50,
     required: true,
   },
+
   externalLink: {
     type: String,
     maxLenght: 100,
     required: true,
   },
+
   creatorId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'User',
   },
+
   autor: {
     autorName: {
       type: String,
     },
-
     socials: [
       {
         media: {
@@ -32,50 +34,66 @@ const edusourceScheme = mongoose.Schema({
       }
     ],
   },
-  language: {
+
+  isVisible: {
+    type: Boolean,
+    default: false,
+  },
+  
+  lang : {
     type: String,
     maxLenght: 10,
     required: true,
   },
+
+  range: [{ type: Number }],
+
   level: {
     type: String,
     maxLenght: 10,
   },
-  discipline: [
-    {
-      type: String,
-      maxLenght: 50,
-      required: true,
-    },
-  ],
+
+  discipline: {
+    type: String,
+    maxLenght: 50,
+    required: true,
+  },
+  
   subDicipline: [
     {
       type: String,
       maxLenght: 50,
     },
   ],
+  
   link: {
     type: String,
     maxLenght: 50,
   },
+  
   description: {
     type: String,
   },
+  
   image: {
     type: String,
     required: false,
   },
+  
   licence: {
     type: String,
     maxLenght: 50,
   },
+  
   date: {
     type: Date,
     default: Date.now()
   },
+  
   pdfDocument: {
     type: String,
   },
+  
   valorations: [
     {
       senderId: {
@@ -99,6 +117,7 @@ const edusourceScheme = mongoose.Schema({
       },
     },
   ],
+  
   valorationsAverage: {
     votes: {
       type: Number,
@@ -108,17 +127,17 @@ const edusourceScheme = mongoose.Schema({
     },
     // calcular en algún momento la media de los votos aceptados, para ofrecer el típico: 4,5/5 - 438 evaluaciones
   }
-}, );
+},);
 
 // edusourceScheme.index({ '$**': 'text' });
 edusourceScheme.index(
   {
-     "title": "text",
-     "autorName": "text",
-     "user": "text",
-     "subDicipline": "text",
-     "description": "text",
-     "comment": "text",
+    "title": "text",
+    "autorName": "text",
+    "user": "text",
+    "subDicipline": "text",
+    "description": "text",
+    "comment": "text",
   }
 )
 export default mongoose.model('Edusource', edusourceScheme);

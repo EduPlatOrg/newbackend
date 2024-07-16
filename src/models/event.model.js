@@ -7,6 +7,7 @@ const eventScheme = mongoose.Schema({
     required: true,
     unique: true,
   },
+  
   description: {
     type: String,
     maxLenght: 500, //?

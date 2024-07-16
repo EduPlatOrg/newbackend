@@ -1,29 +1,37 @@
 import mongoose from 'mongoose';
 
 export const queryFormatter = (req) => {
-    const allowedFilters = ['creatorId', 'title', 'discipline', 'description', 'autor', 'valorations', 'language', 'level', 'text']
+    const allowedFilters = ['title', 'discipline', 'description', 'autor', 'valorations', 'lang', 'range', 'text']
 
     let search = {}
     const query = req.query;
     const keys = Object.keys(query)
 
-    keys.forEach((key) => {
+
+    for (let key of keys) {
+        if (query[key] == null || query[key] == undefined || query[key] === '' || query[key] === "''" || query[key] === '""') {
+            continue
+        }
+
         if (allowedFilters.includes(key)) {
-
+            
+            // TODO: poner orden de valoracion por defecto
+            
             switch (key) {
-                case 'creatorId': search[key] = mongoose.Types.ObjectId.createFromHexString(query['creatorId'])
-                    break
+                
+                case 'range':
+                    // TODO: filtrar por range 
+                    search['range'] = query['range']
+                    console.log('filtra por ', key)
+                    console.log({ search })
 
-                case 'valorations':
-                    search['valorationsAverage.average'] = { $gte: +`${query[key]}` }
-                    break;
+
+
+
+                    break
 
                 case 'autor':
                     search['autor.autorName'] = { $regex: query[key], $options: 'i' }
-                    break
-
-                case 'text':
-                    search = { $text: { $search: query[key] } }
                     break
 
                 default:
@@ -32,6 +40,7 @@ export const queryFormatter = (req) => {
             }
         }
     }
-    )
+
+    console.log({ search })
     return search
 }
