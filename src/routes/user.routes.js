@@ -12,6 +12,7 @@ import {
   resetPassword,
   getAllUsers,
   editUser,
+  getUserById,
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -30,6 +31,8 @@ router.post('/user/verify/:token', verifyUser);
 router.post('/login', logInUser);
 
 router.post('/forgotPassword', forgotPassword);
+
+router.get('/getUserById/:id', getUserById);
 
 router.use(authRequired);
 

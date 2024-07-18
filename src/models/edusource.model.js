@@ -1,24 +1,21 @@
 import mongoose from 'mongoose';
 
-const edusourceScheme = mongoose.Schema({
+const edusourceSchema = mongoose.Schema({
   title: {
     type: String,
-    maxLenght: 50,
+    maxLength: 50,
     required: true,
   },
-
   externalLink: {
     type: String,
-    maxLenght: 100,
+    maxLength: 100,
     required: true,
   },
-
   creatorId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
     ref: 'User',
   },
-
   autor: {
     autorName: {
       type: String,
@@ -30,70 +27,57 @@ const edusourceScheme = mongoose.Schema({
         },
         user: {
           type: String,
-        }
-      }
+        },
+      },
     ],
   },
-
   isVisible: {
     type: Boolean,
     default: false,
   },
-  
-  lang : {
+  lang: {
     type: String,
-    maxLenght: 10,
+    maxLength: 10,
     required: true,
   },
-
   range: [{ type: Number }],
-
   level: {
     type: String,
-    maxLenght: 10,
+    maxLength: 10,
   },
-
   discipline: {
     type: String,
-    maxLenght: 50,
+    maxLength: 50,
     required: true,
   },
-  
-  subDicipline: [
+  subDiscipline: [
     {
       type: String,
-      maxLenght: 50,
+      maxLength: 50,
     },
   ],
-  
   link: {
     type: String,
-    maxLenght: 50,
+    maxLength: 50,
   },
-  
   description: {
     type: String,
   },
-  
   image: {
     type: String,
     required: false,
   },
-  
   licence: {
     type: String,
-    maxLenght: 50,
+    maxLength: 50,
   },
-  
   date: {
     type: Date,
-    default: Date.now()
+    default: Date.now,
   },
-  
   pdfDocument: {
     type: String,
   },
-  
   valorations: [
     {
       senderId: {
@@ -105,7 +89,7 @@ const edusourceScheme = mongoose.Schema({
       },
       comment: {
         type: String,
-        maxLenght: 500,
+        maxLength: 500,
       },
       date: {
         type: Date,
@@ -117,7 +101,6 @@ const edusourceScheme = mongoose.Schema({
       },
     },
   ],
-  
   valorationsAverage: {
     votes: {
       type: Number,
@@ -125,22 +108,19 @@ const edusourceScheme = mongoose.Schema({
     average: {
       type: Number,
     },
-    // calcular en algún momento la media de los votos aceptados, para ofrecer el típico: 4,5/5 - 438 evaluaciones
-  }
-},);
+  },
+});
 
-// edusourceScheme.index({ '$**': 'text' });
-edusourceScheme.index(
-  {
-    "title": "text",
-    "autorName": "text",
-    "user": "text",
-    "subDicipline": "text",
-    "description": "text",
-    "comment": "text",
-  }
-)
-export default mongoose.model('Edusource', edusourceScheme);
+edusourceSchema.index({
+  title: 'text',
+  autorName: 'text',
+  user: 'text',
+  subDiscipline: 'text',
+  description: 'text',
+  comment: 'text',
+});
+
+export default mongoose.model('Edusource', edusourceSchema);
 
 // alvaro serra
 // 18:52

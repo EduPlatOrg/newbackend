@@ -1,7 +1,12 @@
 import { Router } from 'express';
 import { authRequired } from '../middlewares/validateToken.js';
 import {
-    deleteEdusource, editEdusource, getEdusourceById, getEdusources, newEdusource
+  deleteEdusource,
+  editEdusource,
+  getEdusourceById,
+  getEdusources,
+  newEdusource,
+  getOwnResources,
 } from '../controllers/edusource.controller.js';
 
 const router = Router();
@@ -13,9 +18,9 @@ router.get('/all', getEdusources);
 
 router.get('/getEdusourceById/:id', getEdusourceById);
 
-
 router.use(authRequired);
 // ! AQUI LAS RUTAS QUE REQUIERAN DE AUTENTICACION
+router.get('/ownResources', getOwnResources);
 
 router.post('/newEdusource', newEdusource);
 
@@ -24,4 +29,3 @@ router.patch('/editEdusource/:id', editEdusource);
 router.delete('/deleteEdusource/:id', deleteEdusource);
 
 export default router;
-

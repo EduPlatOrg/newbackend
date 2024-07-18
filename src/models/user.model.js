@@ -1,32 +1,28 @@
 import mongoose from 'mongoose';
 
-const userScheme = mongoose.Schema({
+const userSchema = mongoose.Schema({
   username: {
     type: String,
-    maxLenght: 50,
+    maxLength: 50,
     required: true,
     unique: true,
   },
-
   email: {
     type: String,
-    maxLenght: 50,
+    maxLength: 50,
     required: true,
     unique: true,
   },
-
   firstname: {
     type: String,
-    maxlenght: 50,
+    maxLength: 50,
     required: true,
   },
-
   lastname: {
     type: String,
-    maxlenght: 50,
+    maxLength: 50,
     required: true,
   },
-
   publicData: {
     name: { type: Boolean, default: true },
     emails: { type: Boolean, default: true },
@@ -35,29 +31,24 @@ const userScheme = mongoose.Schema({
     social: { type: Boolean, default: true },
     lastLogin: { type: Boolean, default: true },
   },
-
   password: {
     type: String,
-    minlenght: 8,
-    maxlenght: 100,
+    minLength: 8,
+    maxLength: 100,
   },
-
   bio: {
     type: String,
     default: '',
   },
-
   karma: {
     type: Number,
     default: 0,
   },
-
   picture: {
     type: String,
     default:
       'https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png',
   },
-
   job: {
     position: {
       type: String,
@@ -68,59 +59,48 @@ const userScheme = mongoose.Schema({
       default: 'enter workplace',
     },
   },
-
   isVerified: {
     type: Boolean,
     default: false,
   },
-
   isCompleted: {
     type: Number,
     required: false,
     default: 0,
   },
-
   emails: [],
-
   address: [],
-
   phones: [],
-
   social: [],
-
   lastLogin: {
     type: Date,
     default: Date.now,
   },
- 
   lang: {
     type: String,
-    maxLenght: 6,
+    maxLength: 6,
     default: 'es',
   },
- 
   isLogged: {
     type: Boolean,
     default: false,
   },
- 
   isBoss: {
     type: Boolean,
     default: false,
   },
-
   valorations: [
     {
       senderId: {
         type: String,
-        maxLenght: 500,
+        maxLength: 500,
       },
       value: {
         type: Number,
       },
       comment: {
         type: String,
-        maxLenght: 500,
+        maxLength: 500,
       },
       date: {
         type: Date,
@@ -136,16 +116,19 @@ const userScheme = mongoose.Schema({
       },
     },
   ],
- 
-  favorites: [],
-  
+  favorites: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Edusource',
+    },
+  ],
   edusources: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Edusource',
-    }
+    },
   ],
 });
 
-userScheme.index({ '$**': 'text' });
-export default mongoose.model('User', userScheme);
+userSchema.index({ '$**': 'text' });
+export default mongoose.model('User', userSchema);

@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { generateTokenAccess } from '../libs/jsonwebtoken.js';
 import User from '../models/user.model.js';
+
 import jwt from 'jsonwebtoken';
 import { sendEmailVerification, sendNewPassword } from '../services/mailing.js';
 import { randomPinNumber } from '../utils/randomGenerator.js';
@@ -136,7 +137,7 @@ export const logInUser = async (req, res) => {
       { email },
       { isLogged },
       { new: true }
-    );
+    ).populate('edusources');
 
     if (!userFound) {
       //TODO: VALIDAR MEJOR LOS ERRORES
@@ -151,6 +152,7 @@ export const logInUser = async (req, res) => {
       return res.status(400).send('User not verified');
     }
     await User.findByIdAndUpdate(userFound._id, { lastLogin: Date.now() });
+
     const tokenAccess = await generateTokenAccess({
       _id: userFound._id,
       firstname: userFound.firstname,
@@ -232,7 +234,7 @@ export const forgotPassword = async (req, res) => {
 };
 
 export const resetPassword = async (req, res) => {
-  const {  password } = req.body;
+  const { password } = req.body;
   const { _id } = req.user;
 
   if (!password || password.length < 8)
@@ -263,7 +265,7 @@ export const getAllUsers = async (req, res) => {
     return res.status(404).json({ success: false, message: 'Invalid user' });
 
   try {
-    const allUsers = await User.find({}, { username: true, isLogged: true });
+    const allUsers = await User.find();
     return res.status(200).json({ success: true, _id, allUsers });
   } catch (error) {
     console.error(error);
@@ -292,6 +294,24 @@ export const editUser = async (req, res) => {
       message: 'User successfully updated.',
       ...updatedFields,
     });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+export const getUserById = async (req, res) => {
+  const _id = req.params.id;
+
+  if (!_id) {
+    return res.status(404).json({ success: false, message: 'Invalid user' });
+  }
+
+  try {
+    const user = await User.findById(_id).populate('edusources');
+    return res.status(200).json({ success: true, user });
   } catch (error) {
     console.error(error);
     return res
