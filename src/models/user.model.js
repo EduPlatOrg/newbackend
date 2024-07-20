@@ -91,29 +91,8 @@ const userSchema = mongoose.Schema({
   },
   valorations: [
     {
-      senderId: {
-        type: String,
-        maxLength: 500,
-      },
-      value: {
-        type: Number,
-      },
-      comment: {
-        type: String,
-        maxLength: 500,
-      },
-      date: {
-        type: Date,
-        default: Date.now,
-      },
-      accepted: {
-        type: Boolean,
-        default: false,
-      },
-      rejected: {
-        type: Boolean,
-        default: false,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Valoration',
     },
   ],
   favorites: [

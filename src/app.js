@@ -13,6 +13,7 @@ import collectionRouter from './routes/collection.routes.js';
 import mailingRouter from './routes/mailing.routes.js';
 import eventRouter from './routes/event.routes.js';
 import inscriptionRouter from './routes/inscription.routes.js';
+import valorationRouter from './routes/valoration.routes.js';
 
 const port = process.env.PORT || 4000;
 const app = express();
@@ -51,6 +52,7 @@ app.use('/v1/collection', collectionRouter);
 app.use('/v1/contact', mailingRouter);
 app.use('/v1/events', eventRouter);
 app.use('/v1/inscriptions', inscriptionRouter);
+app.use('/v1/valorations', valorationRouter);
 
 connectDB();
 

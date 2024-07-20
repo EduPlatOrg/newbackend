@@ -13,7 +13,15 @@ export const getEdusourceById = async (req, res) => {
     });
 
   try {
-    const edusource = await Edusource.findById(id);
+    const edusource = await Edusource.findById(id)
+      .populate('creatorId')
+      .populate({
+        path: 'valorations',
+        populate: {
+          path: 'senderId',
+          model: 'User',
+        },
+      });
     if (!edusource)
       return res.status(404).json({
         success: false,

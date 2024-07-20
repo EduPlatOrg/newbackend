@@ -80,25 +80,8 @@ const edusourceSchema = mongoose.Schema({
   },
   valorations: [
     {
-      senderId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
-      value: {
-        type: Number,
-      },
-      comment: {
-        type: String,
-        maxLength: 500,
-      },
-      date: {
-        type: Date,
-        default: Date.now,
-      },
-      accepted: {
-        type: Boolean,
-        default: false,
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Valoration',
     },
   ],
   valorationsAverage: {
