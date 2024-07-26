@@ -310,7 +310,15 @@ export const getUserById = async (req, res) => {
   }
 
   try {
-    const user = await User.findById(_id).populate('edusources');
+    const user = await User.findById(_id)
+      .populate('edusources')
+      .populate({
+        path: 'valorations',
+        populate: {
+          path: 'senderId',
+          model: 'User',
+        },
+      });
     return res.status(200).json({ success: true, user });
   } catch (error) {
     console.error(error);

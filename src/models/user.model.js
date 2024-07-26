@@ -107,6 +107,14 @@ const userSchema = mongoose.Schema({
       ref: 'Edusource',
     },
   ],
+  valorationsAverage: {
+    votes: {
+      type: Number,
+    },
+    average: {
+      type: Number,
+    },
+  },
 });
 
 userSchema.index({ '$**': 'text' });
