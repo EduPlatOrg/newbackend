@@ -213,7 +213,7 @@ export const removeValoration = async (req, res) => {
         (acc, val) => acc + val.rating,
         0
       );
-      const newAverage = 0;
+      let newAverage = 0;
       if (valorationLength > 0) {
         newAverage = valorationRating / valorationLength;
       }
@@ -255,7 +255,7 @@ export const removeValoration = async (req, res) => {
         (acc, val) => acc + val.rating,
         0
       );
-      const newAverage = 0;
+      let newAverage = 0;
       if (valorationLength > 0) {
         newAverage = valorationRating / valorationLength;
       }
