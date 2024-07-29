@@ -42,7 +42,8 @@ export const asignNewValoration = async (req, res) => {
       },
       { new: true }
     ).populate('valorations');
-
+    console.log('resourceValorated', resourceValorated);
+    console.log('resourceValorated.valorations', resourceValorated.valorations);
     const valorationLength = resourceValorated.valorations.length;
     const valorationRating = resourceValorated.valorations.reduce(
       (acc, val) => acc + val.rating,
@@ -98,7 +99,7 @@ export const asignNewUserValoration = async (req, res) => {
     rating,
     comment,
     userId,
-    accepted: true,
+    accepted: false,
   };
 
   if (!rating || !comment || !userId)
