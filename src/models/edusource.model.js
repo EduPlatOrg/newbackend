@@ -92,6 +92,10 @@ const edusourceSchema = mongoose.Schema({
       type: Number,
     },
   },
+  likes: {
+    type: Number,
+    default: 0,
+  },
 });
 
 edusourceSchema.index({
