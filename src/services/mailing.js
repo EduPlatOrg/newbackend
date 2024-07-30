@@ -5,6 +5,7 @@ import createSupportMessageTemplate from './mail-templates/createSupportMessageT
 import createSupportMessageConfirmationTemplate from './mail-templates/createSupportMessageConfirmationTemplate.js';
 import createChangePasswordTemplate from './mail-templates/createChangePasswordTemplate.js';
 import createVerificationEmailTemplate from './mail-templates/createVerificationEmailTemplate.js';
+import createInfoMessageTemplate from './mail-templates/createInfoMessageTemplate.js';
 
 const OAuth2 = google.auth.OAuth2;
 
@@ -84,5 +85,14 @@ export async function sendSupportMailConfirmation(name, surname, email, subject,
     to: email,
     subject: `Su mensaje ha sido enviado correctamente`,
     html: createSupportMessageConfirmationTemplate(name, surname, email, subject, message),
+  });
+}
+
+export async function sendInfoMail(name, surname, email, subject, message) {
+  return await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: subject,
+    html: createInfoMessageTemplate(name, surname, email, subject, message),
   });
 }
