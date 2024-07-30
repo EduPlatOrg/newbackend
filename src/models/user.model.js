@@ -115,6 +115,38 @@ const userSchema = mongoose.Schema({
       type: Number,
     },
   },
+  palette: {
+    key: {
+      type: Number,
+      default: 0,
+    },
+    pictureHeader: {
+      type: String,
+      required: false,
+      default:
+        'https://images.unsplash.com/photo-1540228232483-1b64a7024923?ixlib=rb-1.2.1&auto=format&fit=crop&w=967&q=80',
+    },
+    primaryColor: {
+      type: String,
+      maxLenght: 10,
+      default: '#231e39',
+    },
+    secondaryColor: {
+      type: String,
+      maxLenght: 10,
+      default: '#b3b8cd',
+    },
+    primaryText: {
+      type: String,
+      maxLenght: 10,
+      default: '#b3b8cd',
+    },
+    secondaryText: {
+      type: String,
+      maxLenght: 10,
+      default: '#1f1a32',
+    },
+  },
 });
 
 userSchema.index({ '$**': 'text' });
