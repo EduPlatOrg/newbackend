@@ -92,10 +92,12 @@ const edusourceSchema = mongoose.Schema({
       type: Number,
     },
   },
-  likes: {
-    type: Number,
-    default: 0,
-  },
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+  ],
 });
 
 edusourceSchema.index({
