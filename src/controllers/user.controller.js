@@ -3,7 +3,7 @@ import { generateTokenAccess } from '../libs/jsonwebtoken.js';
 import User from '../models/user.model.js';
 
 import jwt from 'jsonwebtoken';
-import { sendEmailVerification, sendNewPassword } from '../services/mailing.js';
+import { sendEmailVerification, sendInfoMail, sendNewPassword } from '../services/mailing.js';
 import { randomPinNumber } from '../utils/randomGenerator.js';
 
 export const registerUser = async (req, res) => {
@@ -330,3 +330,48 @@ export const getUserById = async (req, res) => {
       .json({ success: false, message: 'Internal server error.' });
   }
 };
+
+export const banUserById = async (req, res) => {
+  const { id } = req.params
+  if (!id) return res.status(404).json({
+    success: false, message: 'Invalid request'
+  });
+
+  const { _id } = req.user;
+  if (!_id) return res.status(400).json({
+    success: false,
+    message: 'Invalid token.'
+  })
+
+  try {
+    const user = await User.findById(_id);
+    if (!user || !user.isBoss) return res.status(401).json({
+      success: false,
+      message: 'Unauthorized.'
+    })
+
+    // aqui se banea
+    const bannedUser = await User.findByIdAndUpdate(
+      id,
+      { isVerified: false },
+      { new: true }
+    )
+    // aqui se informa
+    const { firstname, lastname, email } = bannedUser;
+    const subject = 'Hay algún problema con tu cuenta Eduplat';
+    const message = 'Hemos detectado alguna anomalía en tu cuenta y ha sido desactivada, por favor contacta con los administradores para solucionar el problema'
+    await sendInfoMail(firstname,lastname,email,subject, message)
+
+    return res.json({
+      succes: true,
+      bannedUser
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Error al banear',
+      error: error.errmsg
+    });
+  }
+}

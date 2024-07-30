@@ -13,6 +13,7 @@ import {
   getAllUsers,
   editUser,
   getUserById,
+  banUserById,
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -46,5 +47,7 @@ router.get('/getAllUsers', getAllUsers);
 router.patch('/resetPassword', resetPassword);
 
 router.patch('/edit-user/:id', editUser);
+
+router.patch('/ban-user/:id', banUserById);
 
 export default router;
