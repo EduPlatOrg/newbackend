@@ -287,8 +287,11 @@ export const editUser = async (req, res) => {
     const { _doc } = await User.findById(_id);
     const updatedUser = { ..._doc, ...updatedFields };
     const { password, ...secureUpdate } = updatedUser;
-    await User.findByIdAndUpdate(_id, secureUpdate, { new: true });
-
+    console.log(secureUpdate, '<--- secureUpdate');
+    const result = await User.findByIdAndUpdate(_id, secureUpdate, {
+      new: true,
+    });
+    console.log(result, '<--- result');
     return res.status(200).json({
       success: true,
       message: 'User successfully updated.',
