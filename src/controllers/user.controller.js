@@ -333,6 +333,8 @@ export const getUserById = async (req, res) => {
 };
 
 export const banUserById = async (req, res) => {
+  const { action } = req.body;
+  // TODO: req.body action: banUser o unBanUser --- hay que hacer la logica
   const { id } = req.params
   if (!id) return res.status(404).json({
     success: false, message: 'Invalid request'
@@ -357,6 +359,10 @@ export const banUserById = async (req, res) => {
       { isVerified: false },
       { new: true }
     )
+    if (!bannedUser) return res.json({
+      success: false,
+      message: 'User not found'
+    })
     // aqui se informa
     const { firstname, lastname, email } = bannedUser;
     const subject = 'Hay algún problema con tu cuenta Eduplat';
@@ -385,9 +391,7 @@ export const addKarma = async (req, res) => {
 
   try {
     const result = await addKarmaService(id, karma)
-    return res.json({
-      result
-    })
+    return res.json(result)
   } catch (error) {
     console.error(error);
     return res.status(400).json({
