@@ -5,6 +5,7 @@ import User from '../models/user.model.js';
 import jwt from 'jsonwebtoken';
 import { sendEmailVerification, sendInfoMail, sendNewPassword } from '../services/mailing.js';
 import { randomPinNumber } from '../utils/randomGenerator.js';
+import { addKarmaService } from '../services/karmaService.js';
 
 export const registerUser = async (req, res) => {
   const { firstname, lastname, username, email, password } = req.body;
@@ -371,6 +372,27 @@ export const banUserById = async (req, res) => {
     return res.status(400).json({
       success: false,
       message: 'Error al banear',
+      error: error.errmsg
+    });
+  }
+}
+
+export const addKarma = async (req, res) => {
+  const { id, karma } = req.body;
+  if (!id || !karma) return res.status(404).json({
+    success: false, message: 'Invalid request'
+  });
+
+  try {
+    const result = await addKarmaService(id, karma)
+    return res.json({
+      result
+    })
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Error en la adición de karma',
       error: error.errmsg
     });
   }

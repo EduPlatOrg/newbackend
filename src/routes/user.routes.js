@@ -14,6 +14,7 @@ import {
   editUser,
   getUserById,
   banUserById,
+  addKarma
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -49,5 +50,7 @@ router.patch('/resetPassword', resetPassword);
 router.patch('/edit-user/:id', editUser);
 
 router.patch('/ban-user/:id', banUserById);
+
+router.patch('/add-karma', addKarma);
 
 export default router;
