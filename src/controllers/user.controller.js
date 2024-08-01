@@ -339,7 +339,6 @@ export const getUserById = async (req, res) => {
 export const banUserById = async (req, res) => {
   const { isVerified } = req.body;
 
-  // TODO: req.body action: banUser o unBanUser --- hay que hacer la logica
   const { id } = req.params;
   if (!id)
     return res.status(404).json({
@@ -362,7 +361,7 @@ export const banUserById = async (req, res) => {
         message: 'Unauthorized.',
       });
 
-    // aqui se banea
+    // aqui se banea o desbanea
     const bannedUser = await User.findByIdAndUpdate(
       id,
       { isVerified },
@@ -377,9 +376,15 @@ export const banUserById = async (req, res) => {
       });
     // aqui se informa
     const { firstname, lastname, email } = bannedUser;
-    const subject = 'Hay algún problema con tu cuenta Eduplat';
-    const message =
-      'Hemos detectado alguna anomalía en tu cuenta y ha sido desactivada, por favor contacta con los administradores para solucionar el problema';
+    let subject, message;
+    if (isVerified) {
+       subject = 'Tu cuenta ha sido reactivada'
+       message = 'Se ha resuelto la incidencia en tu cuenta, puedes volver a utilizar la plataforma. Muchas gracias.';
+    } else {
+       subject = 'Hay algún problema con tu cuenta Eduplat';
+       message = 'Hemos detectado alguna anomalía en tu cuenta y ha sido desactivada, por favor contacta con los administradores para solucionar el problema';
+    }
+      
     await sendInfoMail(firstname, lastname, email, subject, message);
 
     return res.json({
