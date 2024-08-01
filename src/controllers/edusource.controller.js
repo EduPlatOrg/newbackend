@@ -1,8 +1,9 @@
+import mongoose from 'mongoose';
 import User from '../models/user.model.js';
 import Edusource from '../models/edusource.model.js';
 import { queryFormatter } from '../utils/queryFormatter.js';
 import { validateEdusource } from '../utils/validateEdusource.js';
-import mongoose from 'mongoose';
+import { likeService } from '../services/likeService.js';
 
 export const getEdusourceById = async (req, res) => {
   const { id } = req.params;
@@ -329,3 +330,47 @@ export const getOwnResources = async (req, res) => {
     });
   }
 };
+
+export const manageLikes = async (req, res) => {
+  const { _id } = req.user;
+  const { id } = req.params;
+
+  // TODO: confirmar la necesidad de recibir el userId por el body, ya que debo estar autenticado para dar likes, no?
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(404).json({
+      success: false,
+      message: 'Invalid request',
+    });
+  }
+
+  if (!_id || !id) {
+    return res.status(404).json({
+      success: false,
+      message: 'Invalid request',
+    });
+  }
+
+  try {
+    const likeResponse = await likeService(id, _id)
+    res.json({
+      success: true,
+      ...likeResponse
+    })
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({
+      success: false,
+      message: 'Error de Like',
+      error
+    });
+  }
+}
+// TODO: Implementar like
+// Se debe enviar el id del recurso por params y el id del usuario en el body.
+
+
+// Ruta
+// export const manageLikes = (resourceId, userId) =>
+// axios.post(/edusource/manage-like/${resourceId}, { userId });
+// necesito que esto devuelva en el data, success, el user, esactamente igual que el getUserById ( recuerda que tendremos que popular mas cosas) y el recurso entero igual que se devuelve en el getResourceById, si tienes dudas me avisas.
