@@ -1,13 +1,15 @@
 import bcrypt from 'bcryptjs';
-import { generateTokenAccess } from '../libs/jsonwebtoken.js';
-import User from '../models/user.model.js';
-
 import jwt from 'jsonwebtoken';
+import { generateTokenAccess } from '../libs/jsonwebtoken.js';
+
+import User from '../models/user.model.js';
+import Valoration from '../models/valorations.model.js';
 import {
   sendEmailVerification,
   sendInfoMail,
   sendNewPassword,
 } from '../services/mailing.js';
+
 import { randomPinNumber } from '../utils/randomGenerator.js';
 import { addKarmaService } from '../services/karmaService.js';
 
@@ -81,6 +83,7 @@ export const veryfyUsername = async (req, res) => {
       .json({ success: false, message: 'Internal server error.' });
   }
 };
+
 export const verifyEmail = async (req, res) => {
   const { email } = req.query;
 
@@ -378,13 +381,13 @@ export const banUserById = async (req, res) => {
     const { firstname, lastname, email } = bannedUser;
     let subject, message;
     if (isVerified) {
-       subject = 'Tu cuenta ha sido reactivada'
-       message = 'Se ha resuelto la incidencia en tu cuenta, puedes volver a utilizar la plataforma. Muchas gracias.';
+      subject = 'Tu cuenta ha sido reactivada'
+      message = 'Se ha resuelto la incidencia en tu cuenta, puedes volver a utilizar la plataforma. Muchas gracias.';
     } else {
-       subject = 'Hay algún problema con tu cuenta Eduplat';
-       message = 'Hemos detectado alguna anomalía en tu cuenta y ha sido desactivada, por favor contacta con los administradores para solucionar el problema';
+      subject = 'Hay algún problema con tu cuenta Eduplat';
+      message = 'Hemos detectado alguna anomalía en tu cuenta y ha sido desactivada, por favor contacta con los administradores para solucionar el problema';
     }
-      
+
     await sendInfoMail(firstname, lastname, email, subject, message);
 
     return res.json({
@@ -421,3 +424,30 @@ export const addKarma = async (req, res) => {
     });
   }
 };
+
+export const getOwnComments = async (req, res) => {
+  const { _id } = req.user;
+
+  if (!_id)
+    return res.status(404).json({
+      success: false,
+      message: 'Invalid request',
+    });
+
+  try {
+    const valorations = await Valoration.find({ userId: _id, accepted: false }).populate('senderId').sort({ date: -1 })
+   
+    if (!valorations) {
+      return res.send([])
+    }
+    return res.send(valorations)
+
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({
+      success: false,
+      message: 'Error obteniendo valoraciones',
+      error: error.errmsg,
+    });
+  }
+}
