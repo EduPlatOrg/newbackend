@@ -54,6 +54,8 @@ export const newInscription = async (req, res) => {
         // TODO: añadir inscripcion al usuario
         // TODO: añadir usuario inscrito al evento freeonline
 
+        // Enviar correo a la administración avisando de inscripcion
+
         // Lógica de inscripción - aquí tenemos user y event
         const inscription = new Inscription({
             ...req.body,
