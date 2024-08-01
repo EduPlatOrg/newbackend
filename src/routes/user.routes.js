@@ -14,7 +14,8 @@ import {
   editUser,
   getUserById,
   banUserById,
-  addKarma
+  addKarma,
+  getOwnComments
 } from '../controllers/user.controller.js';
 
 const router = Router();
@@ -52,5 +53,7 @@ router.patch('/edit-user/:id', editUser);
 router.patch('/ban-user/:id', banUserById);
 
 router.patch('/add-karma', addKarma);
+
+router.get('/get-own-comments', getOwnComments);
 
 export default router;
