@@ -7,6 +7,7 @@ import {
   getEdusources,
   newEdusource,
   getOwnResources,
+  manageLikes,
 } from '../controllers/edusource.controller.js';
 
 const router = Router();
@@ -27,5 +28,7 @@ router.post('/newEdusource', newEdusource);
 router.patch('/editEdusource/:id', editEdusource);
 
 router.delete('/deleteEdusource/:id', deleteEdusource);
+
+router.post('/manage-like/:id', manageLikes);
 
 export default router;
