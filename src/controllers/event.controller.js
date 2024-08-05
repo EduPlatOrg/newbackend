@@ -162,6 +162,111 @@ export const deleteEvent = async (req, res) => {
     }
 }
 
-export const getNextEventsAdmin = async () => {
-    
+export const getNextEventsAdmin = async (req, res) => {
+    // TODO: falta hacer la cuenta de inscripciones en cada evento
+
+
+    try {
+        // const events = await Event.find({
+        //     endDate: { $gt: Date.now() },
+        // })
+        //     .populate('inPersonBookings')
+        //     .populate('onlinePremiumBookings')
+
+        const events = await Event.aggregate([
+            { $match: { endDate: { $gt: new Date() } } },
+            {
+                $lookup: {
+                    from: "inscripciones",
+                    localField: "inPersonBookings",
+                    foreignField: "_id",
+                    as: "inPersonBookingsPopulated"
+                }
+            },
+            {
+                $addFields: {
+                    inPersonBookingsFiltered: {
+                        $filter: {
+                            input: "$inPersonBookingsPopulated",
+                            as: "booking",
+                            cond: { $eq: ["$$booking.processed", false] }
+                        }
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: "inscripciones",
+                    localField: "onlinePremiumBookings",
+                    foreignField: "_id",
+                    as: "onlinePremiumBookingsPopulated"
+                }
+            },
+            {
+                $addFields: {
+                    onlinePremiumBookingsFiltered: {
+                        $filter: {
+                            input: "$onlinePremiumBookingsPopulated",
+                            as: "booking",
+                            cond: { $eq: ["$$booking.processed", false] }
+                        }
+                    }
+                }
+            },
+            {
+                $addFields: {
+                    inPersonBookingsCount: { $size: "$inPersonBookingsFiltered" },
+                    onlinePremiumBookingsCount: { $size: "$onlinePremiumBookingsFiltered" },
+                    onlineFreeBookingsCount: { $size: "$onlineFreeBookings" },
+                    totalInscripciones: {
+                        $add: [
+                            { $ifNull: ["$inPersonBookingsCount", 0] },
+                            { $ifNull: ["$onlinePremiumBookingsCount", 0] },
+                            { $ifNull: ["$onlineFreeBookingsCount", 0] }
+                        ]
+                    }
+                }
+            },
+            {
+                $project: {
+                    allFields: "$$ROOT",  // Proyecta todos los campos originales del documento
+                    inPersonBookingsCount: 1,
+                    onlinePremiumBookingsCount: 1,
+                    onlineFreeBookingsCount: 1,
+                    totalInscripciones: 1
+                }
+            },
+            {
+                $replaceRoot: {
+                    newRoot: {
+                        $mergeObjects: ["$allFields", {
+                            inPersonBookingsCount: "$inPersonBookingsCount",
+                            onlinePremiumBookingsCount: "$onlinePremiumBookingsCount",
+                            onlineFreeBookingsCount: "$onlineFreeBookingsCount",
+                            totalInscripciones: "$totalInscripciones"
+                        }]
+                    }
+                }
+            }
+        ]);
+        
+        
+
+        
+
+
+
+
+
+        return res.json({
+            events,
+        })
+
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(500)
+            .json({ success: false, message: 'Error en getNextEventsAdmin.' });
+
+    }
 }

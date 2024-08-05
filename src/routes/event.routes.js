@@ -19,6 +19,6 @@ router.patch('/editEvent/:id', editEvent);
 
 router.delete('/deleteEvent/:id', deleteEvent);
 
-router.get('/next-events/:eventId', getNextEventsAdmin)
+router.get('/next-events', getNextEventsAdmin)
 
 export default router;
