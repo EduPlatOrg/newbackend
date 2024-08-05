@@ -161,3 +161,7 @@ export const deleteEvent = async (req, res) => {
         });
     }
 }
+
+export const getNextEventsAdmin = async () => {
+    
+}
