@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const edusourceSchema = mongoose.Schema({
   title: {
     type: String,
-    maxLength: 50,
+    maxLength: 200,
     required: true,
   },
   externalLink: {
@@ -37,23 +37,23 @@ const edusourceSchema = mongoose.Schema({
   },
   lang: {
     type: String,
-    maxLength: 10,
+    maxLength: 100,
     required: true,
   },
   range: [{ type: Number }],
   level: {
     type: String,
-    maxLength: 10,
+    maxLength: 100,
   },
   discipline: {
     type: String,
-    maxLength: 50,
+    maxLength: 200,
     required: true,
   },
   subDiscipline: [
     {
       type: String,
-      maxLength: 50,
+      maxLength: 200,
     },
   ],
   link: {
@@ -69,7 +69,7 @@ const edusourceSchema = mongoose.Schema({
   },
   licence: {
     type: String,
-    maxLength: 50,
+    maxLength: 200,
   },
   date: {
     type: Date,
