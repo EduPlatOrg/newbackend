@@ -8,7 +8,7 @@ const edusourceSchema = mongoose.Schema({
   },
   externalLink: {
     type: String,
-    maxLength: 100,
+    maxLength: 200,
     required: true,
   },
   creatorId: {
@@ -58,7 +58,7 @@ const edusourceSchema = mongoose.Schema({
   ],
   link: {
     type: String,
-    maxLength: 50,
+    maxLength: 200,
   },
   description: {
     type: String,

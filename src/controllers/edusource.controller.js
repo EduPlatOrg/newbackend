@@ -335,6 +335,8 @@ export const manageLikes = async (req, res) => {
   const { _id } = req.user;
   const { id } = req.params;
 
+  console.log({ _id, id }, '<--- like params');
+
   if (!_id || !id) {
     return res.status(404).json({
       success: false,
@@ -343,17 +345,17 @@ export const manageLikes = async (req, res) => {
   }
 
   try {
-    const likeResponse = await likeService(id, _id)
+    const likeResponse = await likeService(id, _id);
     res.json({
       success: true,
-      ...likeResponse
-    })
+      ...likeResponse,
+    });
   } catch (error) {
     console.error(error);
     res.status(400).json({
       success: false,
       message: 'Error de Like',
-      error
+      error,
     });
   }
-}
+};
