@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { deleteEvent, editEvent, getEventById, getAllEvents, newEvent, getNextEventsAdmin } from '../controllers/event.controller.js';
+import { deleteEvent, editEvent, getEventById, getAllEvents, newEvent, getNextEventsAdmin, getEmailsFromEventByEventId } from '../controllers/event.controller.js';
 import { authRequired } from '../middlewares/validateToken.js';
 
 const router = Router();
@@ -20,5 +20,8 @@ router.patch('/editEvent/:id', editEvent);
 router.delete('/deleteEvent/:id', deleteEvent);
 
 router.get('/next-events', getNextEventsAdmin)
+
+router.get('/get-emails-from-event-id/:eventId', getEmailsFromEventByEventId)
+
 
 export default router;

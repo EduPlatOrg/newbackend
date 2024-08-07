@@ -1,6 +1,4 @@
-import mongoose from 'mongoose';
 import Inscription from '../../models/inscription.model.js';
-import e from 'express';
 
 export async function getUnprocessedInscriptions(eventId) {
   try {

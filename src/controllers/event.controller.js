@@ -249,10 +249,10 @@ export const getNextEventsAdmin = async (req, res) => {
                 }
             }
         ]);
-        
-        
 
-        
+
+
+
 
 
 
@@ -267,6 +267,44 @@ export const getNextEventsAdmin = async (req, res) => {
         return res
             .status(500)
             .json({ success: false, message: 'Error en getNextEventsAdmin.' });
+
+    }
+}
+
+export const getEmailsFromEventByEventId = async (req, res) => {
+    const { eventId } = req.params;
+    const { _id } = req.user;
+    if (!_id || !eventId) {
+        return res.status(404).json({
+            success: false,
+            message: 'Invalid request or unauthorized',
+        });
+    }
+
+    try {
+        const event = await Event.findById(eventId, { title: 1 }) // Excluimos todos los campos del evento
+            .populate({
+                path: 'onlineFreeBookings',
+                select: 'username email '
+            })
+            .populate({
+                path: 'onlinePremiumBookings',
+                select: 'username email'
+            })
+            .populate({
+                path: 'inPersonBookings',
+                select: 'username email'
+            })
+
+        res.status(200).json({
+            success: true,
+            event
+        })
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(500)
+            .json({ success: false, message: 'Internal server error.' });
 
     }
 }

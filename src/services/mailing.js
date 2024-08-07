@@ -96,3 +96,14 @@ export async function sendInfoMail(name, surname, email, subject, message) {
     html: createInfoMessageTemplate(name, surname, email, subject, message),
   });
 }
+
+export async function sendAdminMail(name, surname, email, subject, message) {
+  // TODO: actualizar correo de soporte
+
+  return await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: 'eduplat.bienesdar@gmail.com',
+    subject: `Atención: ${subject}.`,
+    html: createInfoAdminMailTemplate(name, surname, email, subject, message),
+  });
+}
