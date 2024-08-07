@@ -169,7 +169,7 @@ export const editInscription = async (req, res) => {
   const { id } = req.params;
   const { _id } = req.user;
 
-  const { inPersonApplication, premiumApplication, shareResources } = req.body;
+  const { inPersonApplication, premiumApplication } = req.body;
   if (!_id || !id) {
     return res.status(404).json({
       success: false,
