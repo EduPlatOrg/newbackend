@@ -192,7 +192,7 @@ export const getNextEventsAdmin = async (req, res) => {
       { $match: { endDate: { $gt: new Date() } } },
       {
         $lookup: {
-          from: 'inscriptions',
+          from: 'users',
           localField: 'inPersonBookings',
           foreignField: '_id',
           as: 'inPersonBookingsPopulated',
@@ -204,14 +204,14 @@ export const getNextEventsAdmin = async (req, res) => {
             $filter: {
               input: '$inPersonBookingsPopulated',
               as: 'booking',
-              cond: { $eq: ['$$booking.processed', false] },
+              cond: { $eq: ['$$booking.proccessed', false] },
             },
           },
         },
       },
       {
         $lookup: {
-          from: 'inscriptions',
+          from: 'users',
           localField: 'onlinePremiumBookings',
           foreignField: '_id',
           as: 'onlinePremiumBookingsPopulated',
@@ -223,7 +223,7 @@ export const getNextEventsAdmin = async (req, res) => {
             $filter: {
               input: '$onlinePremiumBookingsPopulated',
               as: 'booking',
-              cond: { $eq: ['$$booking.processed', false] },
+              cond: { $eq: ['$$booking.proccessed', false] },
             },
           },
         },
