@@ -107,6 +107,12 @@ const userSchema = mongoose.Schema({
       ref: 'Edusource',
     },
   ],
+  inscriptions: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Inscription',
+    },
+  ],
   valorationsAverage: {
     votes: {
       type: Number,

@@ -12,6 +12,7 @@ import {
 
 import { randomPinNumber } from '../utils/randomGenerator.js';
 import { addKarmaService } from '../services/karmaService.js';
+import { domains } from 'googleapis/build/src/apis/domains/index.js';
 
 export const registerUser = async (req, res) => {
   const { firstname, lastname, username, email, password } = req.body;
@@ -139,7 +140,7 @@ export const verifyUser = async (req, res) => {
 
 export const logInUser = async (req, res) => {
   const { email, password, isLogged } = req.body;
-
+  const cookiesDomain = process.env.DOMAIN;
   try {
     const userFound = await User.findOneAndUpdate(
       { email },
@@ -173,7 +174,8 @@ export const logInUser = async (req, res) => {
     res.cookie('token', tokenAccess, {
       httpOnly: true,
       sameSite: 'none',
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
+      domain: cookiesDomain,
     });
     res.status(200).json(userFound);
   } catch (error) {
@@ -381,11 +383,13 @@ export const banUserById = async (req, res) => {
     const { firstname, lastname, email } = bannedUser;
     let subject, message;
     if (isVerified) {
-      subject = 'Tu cuenta ha sido reactivada'
-      message = 'Se ha resuelto la incidencia en tu cuenta, puedes volver a utilizar la plataforma. Muchas gracias.';
+      subject = 'Tu cuenta ha sido reactivada';
+      message =
+        'Se ha resuelto la incidencia en tu cuenta, puedes volver a utilizar la plataforma. Muchas gracias.';
     } else {
       subject = 'Hay algún problema con tu cuenta Eduplat';
-      message = 'Hemos detectado alguna anomalía en tu cuenta y ha sido desactivada, por favor contacta con los administradores para solucionar el problema';
+      message =
+        'Hemos detectado alguna anomalía en tu cuenta y ha sido desactivada, por favor contacta con los administradores para solucionar el problema';
     }
 
     await sendInfoMail(firstname, lastname, email, subject, message);
@@ -435,13 +439,14 @@ export const getOwnComments = async (req, res) => {
     });
 
   try {
-    const valorations = await Valoration.find({ userId: _id, accepted: false }).populate('senderId').sort({ date: -1 })
-   
-    if (!valorations) {
-      return res.send([])
-    }
-    return res.send(valorations)
+    const valorations = await Valoration.find({ userId: _id, accepted: false })
+      .populate('senderId')
+      .sort({ date: -1 });
 
+    if (!valorations) {
+      return res.send([]);
+    }
+    return res.send(valorations);
   } catch (error) {
     console.error(error);
     return res.status(400).json({
@@ -450,4 +455,4 @@ export const getOwnComments = async (req, res) => {
       error: error.errmsg,
     });
   }
-}
+};
