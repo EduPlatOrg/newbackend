@@ -175,6 +175,7 @@ export const logInUser = async (req, res) => {
       httpOnly: true,
       sameSite: 'none',
       secure: process.env.NODE_ENV === 'production',
+      path: '/',
       domain: cookiesDomain,
     });
     res.status(200).json(userFound);
