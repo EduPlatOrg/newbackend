@@ -7,7 +7,6 @@ const eventScheme = mongoose.Schema({
     required: true,
     unique: true,
   },
-  
   description: {
     type: String,
     maxLenght: 500, //?
@@ -43,13 +42,14 @@ const eventScheme = mongoose.Schema({
   inPersonPlaces: {
     type: Number,
   }, //?availableSeats
-  onlineFreeBookings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-  onlinePremiumBookings: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-
-      ref: 'User',
-    },
+  onlineFreeBookings: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  onlinePremiumBookings: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
   ], //? añadido
   inPersonBookings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   address: {

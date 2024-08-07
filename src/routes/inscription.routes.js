@@ -18,8 +18,8 @@ router.use(authRequired);
 // ! AQUI LAS RUTAS QUE REQUIERAN DE AUTENTICACION
 router.get('/getInscriptionsByEventId/:eventId', getInscriptionsByEventId);
 
-router.delete('/deleteInscription/:id', deleteInscription);
+router.delete('/deleteInscription/:inscriptionId', deleteInscription);
 
-router.patch('/editInscription/:id', editInscription);
+router.patch('/editInscription/:inscriptionId', editInscription);
 
 export default router;

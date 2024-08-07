@@ -270,3 +270,37 @@ export const getNextEventsAdmin = async (req, res) => {
 
     }
 }
+
+export const getEmailsFromEventByEventId = async (req, res) => {
+    const { eventId } = req.params;
+    const { _id } = req.user;
+    if (!_id || !eventId) {
+        return res.status(404).json({
+            success: false,
+            message: 'Invalid request or unauthorized',
+        });
+    }
+
+    try {
+        const emails = await Event.findById(eventId).populate('')
+        const event = await Event.findById(eventId, { _id: 0 }) // Excluimos todos los campos del evento
+            .populate({
+                path: 'onlineFreeBookings',
+                select: 'username email '
+            })
+            .populate({
+                path: 'onlinePremiumBookings',
+                select: 'username email'
+            })
+            .populate({
+                path: 'inPersonBookings',
+                select: 'username email'
+            })
+    } catch (error) {
+        console.error(error);
+        return res
+            .status(500)
+            .json({ success: false, message: 'Internal server error.' });
+
+    }
+}
