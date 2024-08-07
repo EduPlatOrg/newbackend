@@ -249,10 +249,10 @@ export const getNextEventsAdmin = async (req, res) => {
                 }
             }
         ]);
-        
-        
 
-        
+
+
+
 
 
 
@@ -282,8 +282,7 @@ export const getEmailsFromEventByEventId = async (req, res) => {
     }
 
     try {
-        const emails = await Event.findById(eventId).populate('')
-        const event = await Event.findById(eventId, { _id: 0 }) // Excluimos todos los campos del evento
+        const event = await Event.findById(eventId, { title: 1 }) // Excluimos todos los campos del evento
             .populate({
                 path: 'onlineFreeBookings',
                 select: 'username email '
@@ -296,6 +295,11 @@ export const getEmailsFromEventByEventId = async (req, res) => {
                 path: 'inPersonBookings',
                 select: 'username email'
             })
+
+        res.status(200).json({
+            success: true,
+            event
+        })
     } catch (error) {
         console.error(error);
         return res
