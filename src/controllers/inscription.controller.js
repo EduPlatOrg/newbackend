@@ -1,14 +1,17 @@
-//  TODO: Implementar métodos: getInscriptionsByEventId, getInscriptionsByUserId, newInscription, deleteInscription, editInscription
-
+import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { generateTokenAccess } from '../libs/jsonwebtoken.js';
-import { sendAdminMail, sendEmailVerification, sendNewPassword } from '../services/mailing.js';
 import { randomPinNumber } from '../utils/randomGenerator.js';
-import Event from '../models/event.model.js';
 import Inscription from '../models/inscription.model.js';
+import Event from '../models/event.model.js';
 import User from '../models/user.model.js';
+import {
+    sendAdminMail,
+    sendEmailVerification,
+    sendInscriptionNotificationEmail,
+    sendNewPassword
+} from '../services/mailing.js';
 import { getUnprocessedInscriptions } from '../services/incription/inscription.services.js';
-import mongoose from 'mongoose';
 
 export const newInscription = async (req, res) => {
     const { eventId, premiumOnline, inPlace, firstname, lastname, email } =
@@ -79,7 +82,7 @@ export const newInscription = async (req, res) => {
 
         const userWithInscription = await User.findByIdAndUpdate(
             user._id,
-            {$push: { inscriptions: inscription._id },},
+            { $push: { inscriptions: inscription._id }, },
             { new: true }
         );
         if (!userWithInscription) {
@@ -90,13 +93,13 @@ export const newInscription = async (req, res) => {
         }
         const eventWithUserInscription = await Event.findByIdAndUpdate(
             eventId,
-            {$push: { onlineFreeBookings: userWithInscription._id },},
+            { $push: { onlineFreeBookings: userWithInscription._id }, },
             { new: true }
         );
 
         if (!eventWithUserInscription) {
             await User.findByIdAndUpdate(user._id,
-                {$pull: { inscriptions: inscription._id },}
+                { $pull: { inscriptions: inscription._id }, }
             );
             return res.status(404).json({
                 success: false,
@@ -106,8 +109,7 @@ export const newInscription = async (req, res) => {
 
         await inscription.save();
 
-        //   TODO: crear funcion de envio de correo
-        //await sendInscriptionNotificationEmail(inscription, eventWithUserInscription, userWithInscription);
+        await sendInscriptionNotificationEmail(inscription, eventWithUserInscription, userWithInscription);
         return res.status(200).json({
             success: true,
             message: 'Inscription registered successfully.',

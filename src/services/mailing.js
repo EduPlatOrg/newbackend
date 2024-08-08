@@ -6,6 +6,9 @@ import createSupportMessageConfirmationTemplate from './mail-templates/createSup
 import createChangePasswordTemplate from './mail-templates/createChangePasswordTemplate.js';
 import createVerificationEmailTemplate from './mail-templates/createVerificationEmailTemplate.js';
 import createInfoMessageTemplate from './mail-templates/createInfoMessageTemplate.js';
+import createInscriptionNotificationEmailTemplate from './mail-templates/createInscriptionNotificationEmailTemplate.js';
+
+
 
 const OAuth2 = google.auth.OAuth2;
 
@@ -105,5 +108,24 @@ export async function sendAdminMail(name, surname, email, subject, message) {
     to: 'eduplat.bienesdar@gmail.com',
     subject: `Atención: ${subject}.`,
     html: createInfoAdminMailTemplate(name, surname, email, subject, message),
+  });
+}
+
+export async function sendInscriptionNotificationEmail(inscription, eventWithUserInscription, userWithInscription) {
+  const { firstname: name, lastname: surname, email } = userWithInscription
+  const event = eventWithUserInscription.title;
+  const subject = 'Nueva inscripción a procesar';
+  const { description } = inscription;
+  const message =
+    `Nueva inscripción al evento ${event} para su procesamiento
+    <br/><br/>
+    Mensaje asociado: ${description}
+    `
+
+  return await transporter.sendMail({
+    from: process.env.EMAIL_USER,
+    to: 'eduplat.bienesdar@gmail.com',
+    subject: subject,
+    html: createInscriptionNotificationEmailTemplate(name, surname, email, subject, message),
   });
 }
