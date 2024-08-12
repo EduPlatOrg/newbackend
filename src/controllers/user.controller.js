@@ -12,7 +12,6 @@ import {
 
 import { randomPinNumber } from '../utils/randomGenerator.js';
 import { addKarmaService } from '../services/karmaService.js';
-import { domains } from 'googleapis/build/src/apis/domains/index.js';
 
 export const registerUser = async (req, res) => {
   const { firstname, lastname, username, email, password } = req.body;
@@ -174,7 +173,8 @@ export const logInUser = async (req, res) => {
     res.cookie('token', tokenAccess, {
       httpOnly: true,
       sameSite: 'none',
-      secure: process.env.NODE_ENV === 'production',
+      // secure: process.env.NODE_ENV === 'production',
+      secure: true,
       path: '/',
       domain: cookiesDomain,
     });

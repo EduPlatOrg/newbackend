@@ -11,7 +11,7 @@ import {
     sendInscriptionNotificationEmail,
     sendNewPassword
 } from '../services/mailing.js';
-import { getUnprocessedInscriptions } from '../services/incription/inscription.services.js';
+import { getUnprocessedInscriptions } from '../services/inscription/inscription.services.js';
 
 export const newInscription = async (req, res) => {
     const { eventId, premiumOnline, inPlace, firstname, lastname, email } =

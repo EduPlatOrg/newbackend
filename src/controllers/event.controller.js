@@ -1,5 +1,6 @@
 import Event from '../models/event.model.js';
 import User from '../models/user.model.js';
+import { nextEventsPopulatedNotProccessed } from '../services/event/event.services.js';
 
 export const getEventById = async (req, res) => {
   const { id } = req.params;
@@ -179,96 +180,25 @@ export const deleteEvent = async (req, res) => {
 };
 
 export const getNextEventsAdmin = async (req, res) => {
-  // TODO: falta hacer la cuenta de inscripciones en cada evento
+  const { _id } = req.user;
+  if (!_id) {
+    return res.status(404).json({
+      success: false,
+      message: 'Invalid request',
+    });
+  }
 
   try {
-    // const events = await Event.find({
-    //     endDate: { $gt: Date.now() },
-    // })
-    //     .populate('inPersonBookings')
-    //     .populate('onlinePremiumBookings')
+    const user = await User.findById(_id);
+    if (!user || !user.isBoss)
+      return res
+        .status(401)
+        .json({
+          success: false,
+          message: 'Unauthorized.',
+        });
 
-    const events = await Event.aggregate([
-      { $match: { endDate: { $gt: new Date() } } },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'inPersonBookings',
-          foreignField: '_id',
-          as: 'inPersonBookingsPopulated',
-        },
-      },
-      {
-        $addFields: {
-          inPersonBookingsFiltered: {
-            $filter: {
-              input: '$inPersonBookingsPopulated',
-              as: 'booking',
-              cond: { $eq: ['$$booking.proccessed', false] },
-            },
-          },
-        },
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'onlinePremiumBookings',
-          foreignField: '_id',
-          as: 'onlinePremiumBookingsPopulated',
-        },
-      },
-      {
-        $addFields: {
-          onlinePremiumBookingsFiltered: {
-            $filter: {
-              input: '$onlinePremiumBookingsPopulated',
-              as: 'booking',
-              cond: { $eq: ['$$booking.proccessed', false] },
-            },
-          },
-        },
-      },
-      {
-        $addFields: {
-          inPersonBookingsCount: { $size: '$inPersonBookingsFiltered' },
-          onlinePremiumBookingsCount: {
-            $size: '$onlinePremiumBookingsFiltered',
-          },
-          onlineFreeBookingsCount: { $size: '$onlineFreeBookings' },
-          totalInscripciones: {
-            $add: [
-              { $ifNull: ['$inPersonBookingsCount', 0] },
-              { $ifNull: ['$onlinePremiumBookingsCount', 0] },
-              { $ifNull: ['$onlineFreeBookingsCount', 0] },
-            ],
-          },
-        },
-      },
-      {
-        $project: {
-          allFields: '$$ROOT', // Proyecta todos los campos originales del documento
-          inPersonBookingsCount: 1,
-          onlinePremiumBookingsCount: 1,
-          onlineFreeBookingsCount: 1,
-          totalInscripciones: 1,
-        },
-      },
-      {
-        $replaceRoot: {
-          newRoot: {
-            $mergeObjects: [
-              '$allFields',
-              {
-                inPersonBookingsCount: '$inPersonBookingsCount',
-                onlinePremiumBookingsCount: '$onlinePremiumBookingsCount',
-                onlineFreeBookingsCount: '$onlineFreeBookingsCount',
-                totalInscripciones: '$totalInscripciones',
-              },
-            ],
-          },
-        },
-      },
-    ]);
+    const events = await nextEventsPopulatedNotProccessed()
 
     return res.json({
       events,
@@ -292,7 +222,7 @@ export const getEmailsFromEventByEventId = async (req, res) => {
   }
 
   try {
-    const event = await Event.findById(eventId, { title: 1 }) // Excluimos todos los campos del evento
+    const emailsFromEvents = await Event.findById(eventId, { title: 1 }) // Excluimos todos los campos del evento
       .populate({
         path: 'onlineFreeBookings',
         select: 'username email ',
@@ -308,7 +238,7 @@ export const getEmailsFromEventByEventId = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      event,
+      event: emailsFromEvents,
     });
   } catch (error) {
     console.error(error);
