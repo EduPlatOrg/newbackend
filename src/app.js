@@ -56,7 +56,6 @@ app.use('/v1/valorations', valorationRouter);
 
 connectDB();
 
-//TODO: Add websockets for realtime connection later for chat
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
