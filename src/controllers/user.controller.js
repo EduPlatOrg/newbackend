@@ -148,16 +148,14 @@ export const logInUser = async (req, res) => {
     ).populate('edusources');
 
     if (!userFound) {
-      //TODO: VALIDAR MEJOR LOS ERRORES
-
-      return res.status(400).send('User not found');
+      return res.status(404).json({ error: 'User not found' });
     }
     const isMatch = await bcrypt.compare(password, userFound.password);
     if (!isMatch) {
-      return res.status(400).send('Invalid credentials');
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
     if (!userFound.isVerified) {
-      return res.status(400).send('User not verified');
+      return res.status(403).json({ error: 'User not verified' });
     }
     await User.findByIdAndUpdate(userFound._id, { lastLogin: Date.now() });
 

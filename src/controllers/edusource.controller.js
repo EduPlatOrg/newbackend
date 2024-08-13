@@ -83,24 +83,6 @@ export const getEdusources = async (req, res) => {
   }
 };
 
-// ? Modelo de datos enviados por el front a newEdusource
-// {
-//   title: '¿Cómo se usa el microscopio?',
-//   description:
-//     'En este artículo aprenderás cómo usar el microscopio correctamente, una habilidad básica para poder sacarle todo el provecho a este instrumento y para mantenerlo en buen estado.',
-//   youtubeUrl: 'https://www.youtube.com/watch?v=43bBiWFC__g',
-//   externalLink: 'https://www.mundomicroscopio.com/wp-content/uploads/2019/09/como_usar_microscopio.jpg',
-//   discipline: 'Microscopio, Biología',
-//   subDicipline: 'Tecnicas',
-//   language: 'Español',
-//   media: 'Instagram',
-//   user: 'https://www.instagram.com/bajo.elmicroscopio/',
-//   licence: 'CC',
-//   image: 'https://res.cloudinary.com/dk2uakyub/image/upload/v1719994040/como_usar_microscopio_oh91yf.jpg',
-//   pdfDocument: 'https://res.cloudinary.com/dk2uakyub/image/upload/v1719994133/Microscopio_tqjjre.pdf',
-//   creatorId: '66756960c387d68772bf9063'
-// }
-
 export const newEdusource = async (req, res) => {
   const body = req.body;
   const { _id } = req.user;
@@ -334,8 +316,6 @@ export const getOwnResources = async (req, res) => {
 export const manageLikes = async (req, res) => {
   const { _id } = req.user;
   const { id } = req.params;
-
-  console.log({ _id, id }, '<--- like params');
 
   if (!_id || !id) {
     return res.status(404).json({
