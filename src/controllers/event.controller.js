@@ -181,7 +181,6 @@ export const deleteEvent = async (req, res) => {
 
 export const getNextEventsAdmin = async (req, res) => {
   const { eventId } = req.query;
-  console.log(eventId)
   const { _id } = req.user;
   if (!_id) {
     return res.status(404).json({
