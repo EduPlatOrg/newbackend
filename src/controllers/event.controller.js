@@ -180,6 +180,8 @@ export const deleteEvent = async (req, res) => {
 };
 
 export const getNextEventsAdmin = async (req, res) => {
+  const { eventId } = req.query;
+  console.log(eventId)
   const { _id } = req.user;
   if (!_id) {
     return res.status(404).json({
@@ -197,14 +199,23 @@ export const getNextEventsAdmin = async (req, res) => {
           success: false,
           message: 'Unauthorized.',
         });
+    if (eventId) {
+      const event = await Event.findById(eventId)
+      if (!event) return res
+        .status(404)
+        .json({
+          success: false,
+          message: 'Event not found.',
+        });
+    }
 
-    const events = await nextEventsPopulatedNotProccessed()
-
+    const events = await nextEventsPopulatedNotProccessed(eventId)
     return res.json({
+      success: true,
       events,
     });
   } catch (error) {
-    console.error(error);
+    console.error(error.message);
     return res
       .status(500)
       .json({ success: false, message: 'Error en getNextEventsAdmin.' });
