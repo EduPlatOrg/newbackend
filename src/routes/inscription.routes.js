@@ -7,6 +7,7 @@ import {
   editInscription,
   getInscriptionsByEventId,
   newInscription,
+  getMyOwnInscriptions,
 } from '../controllers/inscription.controller.js';
 
 const router = Router();
@@ -21,5 +22,7 @@ router.get('/getInscriptionsByEventId/:eventId', getInscriptionsByEventId);
 router.delete('/deleteInscription/:inscriptionId', deleteInscription);
 
 router.patch('/editInscription/:inscriptionId', editInscription);
+
+router.get('/get-own-inscriptions', getMyOwnInscriptions)
 
 export default router;

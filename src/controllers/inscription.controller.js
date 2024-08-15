@@ -296,3 +296,41 @@ export const editInscription = async (req, res) => {
         });
     }
 };
+
+export const getMyOwnInscriptions = async (req, res) => {
+    const { _id } = req.user;
+    if (!_id) {
+        return res.status(404).json({
+            success: false,
+            message: 'Invalid request',
+        });
+    }
+
+    try {
+        const user = await User.findById(_id);
+        if (!user) return res.status(401)
+            .json({
+                success: false,
+                message: 'Unauthorized.',
+            });
+
+        const myInscriptions = await Inscription.find({ userId: _id }).populate({
+            path: 'eventId',
+            select: 'title startDate endDate',
+        });
+
+        return res.status(200)
+            .json({
+                success: true,
+                myInscriptions,
+            });
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500)
+            .json({
+                success: false,
+                message: 'Error en getNextEventsAdmin.'
+            });
+    }
+
+}
