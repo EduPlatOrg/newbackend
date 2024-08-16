@@ -316,7 +316,7 @@ export const getMyOwnInscriptions = async (req, res) => {
 
         const myInscriptions = await Inscription.find({ userId: _id }).populate({
             path: 'eventId',
-            select: 'title startDate endDate',
+            select: 'title startDate endDate address publicEventUrl premiumEventUrl',
         });
 
         return res.status(200)
