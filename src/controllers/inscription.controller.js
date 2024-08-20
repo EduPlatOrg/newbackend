@@ -231,10 +231,11 @@ export const deleteInscription = async (req, res) => {
     }
 };
 
+// Función para procesar las solicitudes de inscripcion
 export const editInscription = async (req, res) => {
     const { inscriptionId } = req.params;
     const { _id } = req.user;
-
+    // TODO: añadir compartir recursos???
     const { inPersonApplication, premiumApplication } = req.body;
     if (!_id || !inscriptionId) {
         return res.status(404).json({
@@ -307,22 +308,27 @@ export const getMyOwnInscriptions = async (req, res) => {
     }
 
     try {
-        const user = await User.findById(_id);
+        const user = await User.findById(_id).lean();
         if (!user) return res.status(401)
             .json({
                 success: false,
                 message: 'Unauthorized.',
             });
 
-        const myInscriptions = await Inscription.find({ userId: _id }).populate({
+        const myInscriptions = await Inscription.find({ userId: _id }).lean().populate({
             path: 'eventId',
             select: 'title startDate endDate address publicEventUrl premiumEventUrl',
         });
 
+        const modifiedInscriptions = JSON.parse(JSON.stringify(myInscriptions))
+        modifiedInscriptions.forEach(inscription => {
+            if (!inscription.proccessed) inscription.eventId.premiumEventUrl = undefined;
+        })
+
         return res.status(200)
             .json({
                 success: true,
-                myInscriptions,
+                myInscriptions: modifiedInscriptions,
             });
     } catch (error) {
         console.error(error.message);
