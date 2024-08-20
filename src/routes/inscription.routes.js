@@ -25,4 +25,6 @@ router.patch('/editInscription/:inscriptionId', editInscription);
 
 router.get('/get-own-inscriptions', getMyOwnInscriptions)
 
+router.patch('/proccess-inscription', proccessInscription)
+
 export default router;

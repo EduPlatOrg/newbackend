@@ -340,3 +340,72 @@ export const getMyOwnInscriptions = async (req, res) => {
     }
 
 }
+
+// TODO: por aqui
+export const proccessInscription = async (req, res) => {
+    // comprobacion de seguridad, solo boss
+    // traer datos de inscripcion y parametros del body o del queryparam
+    // const { inscriptionId } = req.params;
+    const { inPersonApplication, premiumApplication, shareResources, inscription } = req.body;
+    const { _id } = req.user;
+
+    if (!_id) {
+        return res.status(401).json({
+            success: false,
+            message: 'Invalid request ',
+        });
+    }
+
+    try {
+        const user = await User.findById(_id);
+        if (!user || !user.isBoss)
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized.',
+            });
+        
+        // Obtener datos de la inscripcion
+        const inscription = await Inscription.findById(inscriptionId)
+        const { eventId, userId } = inscription;
+
+
+        // colocar cada uno de las configuraciones en su sitio
+        if (inPersonApplication) {
+            addUserToInPersonEvent(eventId,userId)
+         }
+
+        if (premiumApplication) {
+            addUserToPremiumEvent(eventId,userId)
+        }
+        if (shareResources) {
+            addUserToShareResourcesEvent(eventId,userId)
+        }
+
+        // poner proccessed en true
+        await Inscription.findByIdAndUpdate(inscriptionId,
+            {
+                proccessed: true
+            }
+        )
+        return res.status(200)
+            .json({
+                success: true,
+            });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500)
+            .json({
+                success: false,
+                message: 'Error procesando la inscripción.'
+            });
+    }
+
+
+
+
+
+
+
+
+}

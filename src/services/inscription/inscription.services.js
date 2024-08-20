@@ -21,3 +21,10 @@ export async function getUnprocessedInscriptions(eventId) {
     throw error;
   }
 }
+
+export async function addUserToInPersonEvent(eventId, userId) {
+  
+
+
+  
+}
