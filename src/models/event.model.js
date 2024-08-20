@@ -24,7 +24,9 @@ const eventScheme = mongoose.Schema({
   pdfDocument: {
     type: String,
   },
-  images: [{ type: String }],
+  images: [{
+    type: String
+  }],
   online: {
     type: Boolean,
     default: false,
@@ -51,7 +53,14 @@ const eventScheme = mongoose.Schema({
     ref: 'User',
   },
   ], //? añadido
-  inPersonBookings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  inPersonBookings: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  resourceContributors: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   address: {
     streetaddress: {
       type: String,
@@ -90,8 +99,14 @@ const eventScheme = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  creatorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  editedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  creatorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  editedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
 });
 
 eventScheme.index({ '$**': 'text' });
