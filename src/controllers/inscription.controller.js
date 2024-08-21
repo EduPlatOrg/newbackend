@@ -12,6 +12,9 @@ import {
     sendNewPassword
 } from '../services/mailing.js';
 import { getUnprocessedInscriptions } from '../services/inscription/inscription.services.js';
+import {
+    availableSeats
+} from '../services/event/event.services.js';
 
 export const newInscription = async (req, res) => {
     const { eventId, premiumOnline, inPlace, firstname, lastname, email } =
@@ -345,9 +348,18 @@ export const getMyOwnInscriptions = async (req, res) => {
 export const proccessInscription = async (req, res) => {
     // comprobacion de seguridad, solo boss
     // traer datos de inscripcion y parametros del body o del queryparam
-    // const { inscriptionId } = req.params;
-    const { inPersonApplication, premiumApplication, shareResources, inscription } = req.body;
     const { _id } = req.user;
+    const {
+        inPersonApplication,
+        premiumApplication,
+        shareResources,
+        inscription
+    } = req.body;
+    const {
+        eventId,
+        userId,
+        _id: inscriptionId
+    } = inscription;
 
     if (!_id) {
         return res.status(401).json({
@@ -363,30 +375,44 @@ export const proccessInscription = async (req, res) => {
                 success: false,
                 message: 'Unauthorized.',
             });
-        
+
         // Obtener datos de la inscripcion
-        const inscription = await Inscription.findById(inscriptionId)
-        const { eventId, userId } = inscription;
+        const foundInscription = await Inscription.findById(inscriptionId)
+        if (!foundInscription) {
+            return res.status(404).json({
+                success: false,
+                message: 'Inscription not found',
+            });
+        }
+
+        // comprobar plazas libres -- prioridad en persona
+        let type
+        if(premiumApplication) type = 'inPersonApplication'
+        if (inPersonApplication) type = 'inPersonApplication'
+        
+        const isAvailable = await availableSeats(eventId, type)
+        console.log({isAvailable})
+        
 
 
         // colocar cada uno de las configuraciones en su sitio
-        if (inPersonApplication) {
-            addUserToInPersonEvent(eventId,userId)
-         }
+        // if (inPersonApplication) {
+        //     addUserToInPersonEvent(eventId, userId)
+        // }
 
-        if (premiumApplication) {
-            addUserToPremiumEvent(eventId,userId)
-        }
-        if (shareResources) {
-            addUserToShareResourcesEvent(eventId,userId)
-        }
+        // if (premiumApplication) {
+        //     addUserToPremiumEvent(eventId, userId)
+        // }
+        // if (shareResources) {
+        //     addUserToShareResourcesEvent(eventId, userId)
+        // }
 
-        // poner proccessed en true
-        await Inscription.findByIdAndUpdate(inscriptionId,
-            {
-                proccessed: true
-            }
-        )
+        // // poner proccessed en true
+        // await Inscription.findByIdAndUpdate(inscriptionId,
+        //     {
+        //         proccessed: true
+        //     }
+        // )
         return res.status(200)
             .json({
                 success: true,

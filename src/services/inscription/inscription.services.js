@@ -22,6 +22,7 @@ export async function getUnprocessedInscriptions(eventId) {
   }
 }
 
+
 export async function addUserToInPersonEvent(eventId, userId) {
   
 

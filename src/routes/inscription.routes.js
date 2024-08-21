@@ -8,6 +8,7 @@ import {
   getInscriptionsByEventId,
   newInscription,
   getMyOwnInscriptions,
+  proccessInscription,
 } from '../controllers/inscription.controller.js';
 
 const router = Router();
