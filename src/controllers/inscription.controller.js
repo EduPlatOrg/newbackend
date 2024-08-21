@@ -17,6 +17,8 @@ import {
 import {
     getUnprocessedInscriptions,
     addUserToInPersonEvent,
+    addUserToPremiumEvent,
+    setUserAsContributorInEvent,
 } from '../services/inscription/inscription.services.js';
 
 import {
@@ -408,15 +410,13 @@ export const proccessInscription = async (req, res) => {
 
         // colocar cada uno de las configuraciones en su sitio
         if (inPersonApplication) {
-            addUserToInPersonEvent(eventId, userId)
+            await addUserToInPersonEvent(eventId, userId)
+        } else if (premiumApplication) {
+            await addUserToPremiumEvent(eventId, userId)
         }
-
-        // if (premiumApplication) {
-        //     addUserToPremiumEvent(eventId, userId)
-        // }
-        // if (shareResources) {
-        //     addUserToShareResourcesEvent(eventId, userId)
-        // }
+        if (shareResources) {
+            setUserAsContributorInEvent(eventId, userId)
+        }
 
         // // poner proccessed en true
         // await Inscription.findByIdAndUpdate(inscriptionId,
