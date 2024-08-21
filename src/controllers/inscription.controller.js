@@ -2,19 +2,27 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { generateTokenAccess } from '../libs/jsonwebtoken.js';
 import { randomPinNumber } from '../utils/randomGenerator.js';
+
 import Inscription from '../models/inscription.model.js';
 import Event from '../models/event.model.js';
 import User from '../models/user.model.js';
+
 import {
     sendAdminMail,
     sendEmailVerification,
     sendInscriptionNotificationEmail,
     sendNewPassword
 } from '../services/mailing.js';
-import { getUnprocessedInscriptions } from '../services/inscription/inscription.services.js';
+
 import {
-    availableSeats
+    getUnprocessedInscriptions,
+    addUserToInPersonEvent,
+} from '../services/inscription/inscription.services.js';
+
+import {
+    availableSeats,
 } from '../services/event/event.services.js';
+
 
 export const newInscription = async (req, res) => {
     const { eventId, premiumOnline, inPlace, firstname, lastname, email } =
@@ -386,19 +394,22 @@ export const proccessInscription = async (req, res) => {
         }
 
         // comprobar plazas libres -- prioridad en persona
-        let type
-        if(premiumApplication) type = 'inPersonApplication'
-        if (inPersonApplication) type = 'inPersonApplication'
-        
+        let type;
+        if (premiumApplication) type = 'inPersonApplication';
+        if (inPersonApplication) type = 'inPersonApplication';
         const isAvailable = await availableSeats(eventId, type)
-        console.log({isAvailable})
-        
+        console.log({ isAvailable })
+        if (!isAvailable) return res.status(422).json({
+            success: false,
+            message: 'No seats available for this event',
+        });
+
 
 
         // colocar cada uno de las configuraciones en su sitio
-        // if (inPersonApplication) {
-        //     addUserToInPersonEvent(eventId, userId)
-        // }
+        if (inPersonApplication) {
+            addUserToInPersonEvent(eventId, userId)
+        }
 
         // if (premiumApplication) {
         //     addUserToPremiumEvent(eventId, userId)
