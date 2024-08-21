@@ -354,7 +354,6 @@ export const getMyOwnInscriptions = async (req, res) => {
 
 }
 
-// TODO: por aqui
 export const proccessInscription = async (req, res) => {
     // comprobacion de seguridad, solo boss
     // traer datos de inscripcion y parametros del body o del queryparam
@@ -406,24 +405,22 @@ export const proccessInscription = async (req, res) => {
             message: 'No seats available for this event',
         });
 
-
-
         // colocar cada uno de las configuraciones en su sitio
+        const promises = [];
         if (inPersonApplication) {
-            await addUserToInPersonEvent(eventId, userId)
+            promises.push(addUserToInPersonEvent(eventId, userId));
         } else if (premiumApplication) {
-            await addUserToPremiumEvent(eventId, userId)
+            promises.push(addUserToPremiumEvent(eventId, userId));
         }
         if (shareResources) {
-            setUserAsContributorInEvent(eventId, userId)
+            promises.push(setUserAsContributorInEvent(eventId, userId));
         }
+        // Ejecutar todas las promesas en paralelo
+        await Promise.all(promises);
 
-        // // poner proccessed en true
-        // await Inscription.findByIdAndUpdate(inscriptionId,
-        //     {
-        //         proccessed: true
-        //     }
-        // )
+        // poner proccessed en true
+        await Inscription.updateOne({ _id: inscriptionId }, { proccessed: true });
+
         return res.status(200)
             .json({
                 success: true,
@@ -437,12 +434,4 @@ export const proccessInscription = async (req, res) => {
                 message: 'Error procesando la inscripción.'
             });
     }
-
-
-
-
-
-
-
-
 }
