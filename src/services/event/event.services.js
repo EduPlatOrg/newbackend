@@ -65,3 +65,31 @@ async function getEventWithFilteredInscriptions(eventId) {
     shareResources
   };
 }
+
+export async function availableSeats(eventId, type = 'inPersonApplication' || 'premiumApplication') {
+  const inscription = await Event.findById(eventId)
+  .select('onlinePremiumPlaces inPersonPlaces onlinePremiumBookings inPersonBookings')
+  .lean();
+  const {
+    inPersonPlaces,
+    inPersonBookings,
+    onlinePremiumPlaces,
+    onlinePremiumBookings,
+  } = inscription;
+  let availability = false;
+  
+  switch (type) {
+    case 'inPersonApplication':
+      availability = inPersonPlaces > inPersonBookings.length
+      break;
+
+    case 'premiumApplication':
+      availability = onlinePremiumPlaces > onlinePremiumBookings.length
+      break;
+
+    default:
+      throw new Error("Error en event service");
+      break;
+  }
+  return availability
+}

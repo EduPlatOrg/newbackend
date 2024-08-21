@@ -2,16 +2,29 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { generateTokenAccess } from '../libs/jsonwebtoken.js';
 import { randomPinNumber } from '../utils/randomGenerator.js';
+
 import Inscription from '../models/inscription.model.js';
 import Event from '../models/event.model.js';
 import User from '../models/user.model.js';
+
 import {
     sendAdminMail,
     sendEmailVerification,
     sendInscriptionNotificationEmail,
     sendNewPassword
 } from '../services/mailing.js';
-import { getUnprocessedInscriptions } from '../services/inscription/inscription.services.js';
+
+import {
+    getUnprocessedInscriptions,
+    addUserToInPersonEvent,
+    addUserToPremiumEvent,
+    setUserAsContributorInEvent,
+} from '../services/inscription/inscription.services.js';
+
+import {
+    availableSeats,
+} from '../services/event/event.services.js';
+
 
 export const newInscription = async (req, res) => {
     const { eventId, premiumOnline, inPlace, firstname, lastname, email } =
@@ -231,10 +244,11 @@ export const deleteInscription = async (req, res) => {
     }
 };
 
+// Función para procesar las solicitudes de inscripcion
 export const editInscription = async (req, res) => {
     const { inscriptionId } = req.params;
     const { _id } = req.user;
-
+    // TODO: añadir compartir recursos???
     const { inPersonApplication, premiumApplication } = req.body;
     if (!_id || !inscriptionId) {
         return res.status(404).json({
@@ -307,22 +321,27 @@ export const getMyOwnInscriptions = async (req, res) => {
     }
 
     try {
-        const user = await User.findById(_id);
+        const user = await User.findById(_id).lean();
         if (!user) return res.status(401)
             .json({
                 success: false,
                 message: 'Unauthorized.',
             });
 
-        const myInscriptions = await Inscription.find({ userId: _id }).populate({
+        const myInscriptions = await Inscription.find({ userId: _id }).lean().populate({
             path: 'eventId',
             select: 'title startDate endDate address publicEventUrl premiumEventUrl',
         });
 
+        const modifiedInscriptions = JSON.parse(JSON.stringify(myInscriptions))
+        modifiedInscriptions.forEach(inscription => {
+            if (!inscription.proccessed) inscription.eventId.premiumEventUrl = undefined;
+        })
+
         return res.status(200)
             .json({
                 success: true,
-                myInscriptions,
+                myInscriptions: modifiedInscriptions,
             });
     } catch (error) {
         console.error(error.message);
@@ -333,4 +352,86 @@ export const getMyOwnInscriptions = async (req, res) => {
             });
     }
 
+}
+
+export const proccessInscription = async (req, res) => {
+    // comprobacion de seguridad, solo boss
+    // traer datos de inscripcion y parametros del body o del queryparam
+    const { _id } = req.user;
+    const {
+        inPersonApplication,
+        premiumApplication,
+        shareResources,
+        inscription
+    } = req.body;
+    const {
+        eventId,
+        userId,
+        _id: inscriptionId
+    } = inscription;
+
+    if (!_id) {
+        return res.status(401).json({
+            success: false,
+            message: 'Invalid request ',
+        });
+    }
+
+    try {
+        const user = await User.findById(_id);
+        if (!user || !user.isBoss)
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized.',
+            });
+
+        // Obtener datos de la inscripcion
+        const foundInscription = await Inscription.findById(inscriptionId)
+        if (!foundInscription) {
+            return res.status(404).json({
+                success: false,
+                message: 'Inscription not found',
+            });
+        }
+
+        // comprobar plazas libres -- prioridad en persona
+        let type;
+        if (premiumApplication) type = 'inPersonApplication';
+        if (inPersonApplication) type = 'inPersonApplication';
+        const isAvailable = await availableSeats(eventId, type)
+        console.log({ isAvailable })
+        if (!isAvailable) return res.status(422).json({
+            success: false,
+            message: 'No seats available for this event',
+        });
+
+        // colocar cada uno de las configuraciones en su sitio
+        const promises = [];
+        if (inPersonApplication) {
+            promises.push(addUserToInPersonEvent(eventId, userId));
+        } else if (premiumApplication) {
+            promises.push(addUserToPremiumEvent(eventId, userId));
+        }
+        if (shareResources) {
+            promises.push(setUserAsContributorInEvent(eventId, userId));
+        }
+        // Ejecutar todas las promesas en paralelo
+        await Promise.all(promises);
+
+        // poner proccessed en true
+        await Inscription.updateOne({ _id: inscriptionId }, { proccessed: true });
+
+        return res.status(200)
+            .json({
+                success: true,
+            });
+
+    } catch (error) {
+        console.error(error.message);
+        return res.status(500)
+            .json({
+                success: false,
+                message: 'Error procesando la inscripción.'
+            });
+    }
 }
