@@ -40,6 +40,7 @@ export const newInscription = async (req, res) => {
 
         let user = await User.findOne({ email }).populate('inscriptions');
         if (!user) {
+            // TODO: esto hay que refactorizarlo
             // lógica del registro
             const pin = randomPinNumber();
             const salt = await bcrypt.hash(pin, 10);
@@ -198,6 +199,7 @@ export const deleteInscription = async (req, res) => {
             });
         }
         // borrar inscripcion
+        // TODO: refactorizar hasta el return
         const deletedInscription = await Inscription.findByIdAndDelete(inscriptionId);
         if (!deletedInscription) {
             return res.status(404).json({
@@ -245,10 +247,11 @@ export const deleteInscription = async (req, res) => {
 };
 
 // Función para procesar las solicitudes de inscripcion
+// TODO: esta hay que ver si es útil o la eliminamos
 export const editInscription = async (req, res) => {
     const { inscriptionId } = req.params;
     const { _id } = req.user;
-    // TODO: añadir compartir recursos???
+    // ? añadir compartir recursos???
     const { inPersonApplication, premiumApplication } = req.body;
     if (!_id || !inscriptionId) {
         return res.status(404).json({
@@ -280,7 +283,7 @@ export const editInscription = async (req, res) => {
             await Event.findByIdAndUpdate(
                 eventId,
                 {
-                    $push: { inPersonBookings: userId },
+                    $addToSet: { inPersonBookings: userId },
                 });
         }
         if (premiumApplication) {
@@ -288,7 +291,7 @@ export const editInscription = async (req, res) => {
             await Event.findByIdAndUpdate(
                 eventId,
                 {
-                    $push: { onlinePremiumBookings: userId },
+                    $addToSet: { onlinePremiumBookings: userId },
                 });
         }
 
@@ -379,12 +382,12 @@ export const proccessInscription = async (req, res) => {
 
     try {
         const user = await User.findById(_id);
-        if (!user || !user.isBoss)
+        if (!user || !user.isBoss) {
             return res.status(401).json({
                 success: false,
                 message: 'Unauthorized.',
             });
-
+        }
         // Obtener datos de la inscripcion
         const foundInscription = await Inscription.findById(inscriptionId)
         if (!foundInscription) {
@@ -393,8 +396,8 @@ export const proccessInscription = async (req, res) => {
                 message: 'Inscription not found',
             });
         }
-
         // comprobar plazas libres -- prioridad en persona
+        // TODO: refactor mejor: availableSeats(eventId, inPersonApplication,premiumApplication)
         let type;
         if (premiumApplication) type = 'inPersonApplication';
         if (inPersonApplication) type = 'inPersonApplication';
