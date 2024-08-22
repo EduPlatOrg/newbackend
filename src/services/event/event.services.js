@@ -19,27 +19,26 @@ async function getFutureEventsWithInscriptionCounts() {
     futureEvents.map(async (event) => {
       const inscriptions = await Inscription.find({ eventId: event._id });
 
-      const onlineFreeCount = inscriptions.filter(
+      const onlineFreeBookingsCount = inscriptions.filter(
         (inscription) =>
           !inscription.premiumApplication && !inscription.inPersonApplication
       ).length;
-      const onlinePremiumCount = inscriptions.filter(
+      const onlinePremiumBookingsCount = inscriptions.filter(
         (inscription) =>
           inscription.premiumApplication && !inscription.inPersonApplication
       ).length;
-      const inPersonCount = inscriptions.filter(
+      const inPersonBookingsCount = inscriptions.filter(
         (inscription) => inscription.inPersonApplication
       ).length;
 
       return {
-        onlineFreeBookingsCount: onlineFreeCount,
-        onlinePremiumBookingsCount: onlinePremiumCount,
-        inPersonBookingsCount: inPersonCount,
+        onlineFreeBookingsCount,
+        onlinePremiumBookingsCount,
+        inPersonBookingsCount,
         event,
       };
     })
   );
-
   return eventsWithCounts;
 }
 
@@ -66,10 +65,10 @@ async function getEventWithFilteredInscriptions(eventId) {
   };
 }
 
-export async function availableSeats(eventId, type = 'inPersonApplication' || 'premiumApplication') {
+export async function availableSeats(eventId, inPersonApplication, premiumApplication) {
   const inscription = await Event.findById(eventId)
-  .select('onlinePremiumPlaces inPersonPlaces onlinePremiumBookings inPersonBookings')
-  .lean();
+    .select('onlinePremiumPlaces inPersonPlaces onlinePremiumBookings inPersonBookings')
+    .lean();
   const {
     inPersonPlaces,
     inPersonBookings,
@@ -77,19 +76,12 @@ export async function availableSeats(eventId, type = 'inPersonApplication' || 'p
     onlinePremiumBookings,
   } = inscription;
   let availability = false;
-  
-  switch (type) {
-    case 'inPersonApplication':
-      availability = inPersonPlaces > inPersonBookings.length
-      break;
+  // comprobar que la inscripción es correcta
+  if (inPersonApplication && premiumApplication) throw new Error("Cannot be in person and online premium at once");
+  if (!inPersonApplication && !premiumApplication) throw new Error("No option marked: inPersonApplication, premiumApplication");
 
-    case 'premiumApplication':
-      availability = onlinePremiumPlaces > onlinePremiumBookings.length
-      break;
+  if (inPersonApplication) availability = inPersonPlaces > inPersonBookings.length
+  else if (premiumApplication) availability = onlinePremiumPlaces > onlinePremiumBookings.length
 
-    default:
-      throw new Error("Error en event service");
-      break;
-  }
   return availability
 }
