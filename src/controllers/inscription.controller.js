@@ -397,11 +397,7 @@ export const proccessInscription = async (req, res) => {
             });
         }
         // comprobar plazas libres -- prioridad en persona
-        // TODO: refactor mejor: availableSeats(eventId, inPersonApplication,premiumApplication)
-        let type;
-        if (premiumApplication) type = 'inPersonApplication';
-        if (inPersonApplication) type = 'inPersonApplication';
-        const isAvailable = await availableSeats(eventId, type)
+        const isAvailable = await availableSeats(eventId, inPersonApplication, premiumApplication)
         console.log({ isAvailable })
         if (!isAvailable) return res.status(422).json({
             success: false,
