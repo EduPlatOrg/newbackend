@@ -19,6 +19,7 @@ import {
     addUserToInPersonEvent,
     addUserToPremiumEvent,
     setUserAsContributorInEvent,
+    deleteInscriptionService,
 } from '../services/inscription/inscription.services.js';
 
 import {
@@ -175,7 +176,6 @@ export const deleteInscription = async (req, res) => {
             message: 'Invalid request or unauthorized',
         });
     }
-
     try {
         // autenticar usuario o admin
         const user = await User.findById(_id);
@@ -198,41 +198,8 @@ export const deleteInscription = async (req, res) => {
                 message: 'Unauthorized',
             });
         }
-        // borrar inscripcion
-        // TODO: refactorizar hasta el return
-        const deletedInscription = await Inscription.findByIdAndDelete(inscriptionId);
-        if (!deletedInscription) {
-            return res.status(404).json({
-                success: false,
-                message: 'Inscription not found',
-            });
-        }
-        const { eventId, userId, proccessed } = deletedInscription;
-        // quitar id de inscripcion en array de eventos
-        const modifiedUser = await User.findByIdAndUpdate(userId, {
-            $pull: { inscriptions: inscriptionId },
-        });
-        // buscar en todas las inscripciones del evento y eliminar
-        const modifiedEvent = await Event.findByIdAndUpdate(eventId, {
-            $pull: { onlineFreeBookings: userId },
-        });
-        // comprobar si esta procesada. si no, eliminar solo de freeonline
-        if (proccessed) {
-            await Event.findByIdAndUpdate(eventId, {
-                $pull: {
-                    onlinePremiumBookings: userId,
-                    inPersonBookings: userId
-                }
-            });
+        await deleteInscriptionService(inscriptionId, user.isBoss)
 
-            // notificar en caso de que no lo haya eliminado un Boss.
-            if (!user.isBoss) {
-                const { name, surname, email } = modifiedUser;
-                const subject = 'Inscripción eliminada';
-                const message = `Un usuario ha eliminado su suscripción al evento ${modifiedEvent.title}`;
-                await sendAdminMail(name, surname, email, subject, message)
-            }
-        }
         return res.status(200).json({
             success: true,
             message: 'Inscription deleted',
