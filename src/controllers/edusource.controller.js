@@ -43,6 +43,8 @@ export const getEdusourceById = async (req, res) => {
 export const getEdusources = async (req, res) => {
   // TODO: ordenar siempre por valoraciones - error??
 
+  console.log('en el get')
+  
   const pageSize = 10;
   const search = queryFormatter(req);
   let { page } = req.query;

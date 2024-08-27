@@ -32,11 +32,7 @@ export const queryFormatter = (req) => {
 
       switch (key) {
         case 'range':
-          // TODO: filtrar por range
-          search['range'] = query['range'];
-          console.log('filtra por ', key);
-          console.log({ search });
-
+          search['range'] = +query['range'];
           break;
 
         case 'autor':
