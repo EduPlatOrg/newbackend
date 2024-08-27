@@ -1,5 +1,3 @@
-import mongoose from 'mongoose';
-
 export const queryFormatter = (req) => {
   const allowedFilters = [
     'title',
@@ -12,7 +10,7 @@ export const queryFormatter = (req) => {
     'text',
   ];
 
-  let search = {};
+  const search = {};
   const query = req.query;
   const keys = Object.keys(query);
 
@@ -28,15 +26,9 @@ export const queryFormatter = (req) => {
     }
 
     if (allowedFilters.includes(key)) {
-      // TODO: poner orden de valoracion por defecto
-
       switch (key) {
         case 'range':
-          // TODO: filtrar por range
-          search['range'] = query['range'];
-          console.log('filtra por ', key);
-          console.log({ search });
-
+          search['range'] = +query['range'];
           break;
 
         case 'autor':
@@ -49,7 +41,5 @@ export const queryFormatter = (req) => {
       }
     }
   }
-
-  console.log({ search });
   return search;
 };

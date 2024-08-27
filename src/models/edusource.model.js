@@ -110,28 +110,3 @@ edusourceSchema.index({
 });
 
 export default mongoose.model('Edusource', edusourceSchema);
-
-// alvaro serra
-// 18:52
-// Lista de categorias eduplat.
-// Artes
-// TICS    Informática  Tecnología      TICS    TEPS TRICS
-// Lenguas     - Idiomas- literatura
-// Matemáticas
-// Ciencias Naturales
-// Ciencias Sociales
-// Salud–     NB Educación Física. Educación mental
-// Psicopedagogía- Orientación Educativa — psicopedagogía, pedagogía, funciones ejecutivas, orientación, ESE, inclusión, evaluación, metodologías activas
-// Varias categorías
-// Otras Categorías
-
-// 1 Artes
-// 2 TICS    Informática  Tecnología      TICS    TEPS TRICS
-// 3 Lenguas     - Idiomas- literatura
-// 4 Matemáticas
-// 5 Ciencias Naturales
-// 6 Ciencias Sociales
-// 7 Salud–     NB Educación Física. Educación mental
-// 8 Psicopedagogía- Orientación Educativa — psicopedagogía, pedagogía, funciones ejecutivas, orientación, ESE, inclusión, evaluación, metodologías activas
-// 9 Varias categorías -- no
-// 10 Otras Categorías
