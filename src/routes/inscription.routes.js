@@ -4,7 +4,6 @@ import { Router } from 'express';
 import { authRequired } from '../middlewares/validateToken.js';
 import {
   deleteInscription,
-  editInscription,
   getInscriptionsByEventId,
   newInscription,
   getMyOwnInscriptions,
@@ -21,8 +20,6 @@ router.use(authRequired);
 router.get('/getInscriptionsByEventId/:eventId', getInscriptionsByEventId);
 
 router.delete('/deleteInscription/:inscriptionId', deleteInscription);
-
-router.patch('/editInscription/:inscriptionId', editInscription);
 
 router.get('/get-own-inscriptions', getMyOwnInscriptions)
 
