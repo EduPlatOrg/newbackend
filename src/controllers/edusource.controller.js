@@ -4,6 +4,7 @@ import Edusource from '../models/edusource.model.js';
 import { queryFormatter } from '../utils/queryFormatter.js';
 import { validateEdusource } from '../utils/validateEdusource.js';
 import { likeService } from '../services/likeService.js';
+import { searchEdusources } from '../services/edusource/edusource.services.js';
 
 export const getEdusourceById = async (req, res) => {
   const { id } = req.params;
@@ -41,10 +42,6 @@ export const getEdusourceById = async (req, res) => {
 };
 
 export const getEdusources = async (req, res) => {
-  // TODO: ordenar siempre por valoraciones - error??
-
-  console.log('en el get')
-  
   const pageSize = 10;
   const search = queryFormatter(req);
   let { page } = req.query;
@@ -53,29 +50,17 @@ export const getEdusources = async (req, res) => {
   else page = 1;
 
   try {
-    const filteredResponse = await Edusource.aggregate([
-      {
-        $match: search,
-      },
-      // { $sort: { valorationsAverage[average]: -1 } },
-      {
-        $facet: {
-          metadata: [{ $count: 'totalCount' }],
-          data: [{ $skip: (+page - 1) * +pageSize }, { $limit: +pageSize }],
-        },
-      },
-    ]);
-    const totalCount = filteredResponse[0]?.metadata[0]?.totalCount || 0;
-    const totalPages = Math.ceil(totalCount / pageSize);
+    // Siempre ordena por karma de creador y después por valoraciones
+    const { edusources, totalCount, totalPages } = await searchEdusources(search, page, pageSize)
 
     return res.status(200).json({
       success: true,
       metadata: {
-        totalCount,
         page,
         totalPages,
+        totalCount,
       },
-      edusources: filteredResponse[0].data,
+      edusources
     });
   } catch (error) {
     console.error(error);

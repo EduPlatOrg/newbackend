@@ -1,5 +1,3 @@
-import mongoose from 'mongoose';
-
 export const queryFormatter = (req) => {
   const allowedFilters = [
     'title',
@@ -12,7 +10,7 @@ export const queryFormatter = (req) => {
     'text',
   ];
 
-  let search = {};
+  const search = {};
   const query = req.query;
   const keys = Object.keys(query);
 
@@ -28,8 +26,6 @@ export const queryFormatter = (req) => {
     }
 
     if (allowedFilters.includes(key)) {
-      // TODO: poner orden de valoracion por defecto
-
       switch (key) {
         case 'range':
           search['range'] = +query['range'];
@@ -45,7 +41,5 @@ export const queryFormatter = (req) => {
       }
     }
   }
-
-  console.log({ search });
   return search;
 };
