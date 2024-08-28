@@ -51,12 +51,12 @@ export const getEdusources = async (req, res) => {
 
   try {
     // Siempre ordena por karma de creador y después por valoraciones
-    const { edusources, totalCount, totalPages } = await searchEdusources(search, page, pageSize)
+    const { edusources, totalCount, totalPages, realPage } = await searchEdusources(search, page, pageSize)
 
     return res.status(200).json({
       success: true,
       metadata: {
-        page,
+        page: realPage,
         totalPages,
         totalCount,
       },

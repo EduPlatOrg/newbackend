@@ -1,6 +1,13 @@
 import Edusource from "../../models/edusource.model.js";
 
 export async function searchEdusources(search, page, pageSize) {
+    const totalCount = await Edusource.countDocuments(search);
+    const totalPages = Math.ceil(totalCount / pageSize);
+    let realPage = page;
+    if (page > totalPages) {
+        realPage = 1;
+    };
+
     const edusources = await Edusource.aggregate([
         { $match: search },
         {
@@ -18,12 +25,10 @@ export async function searchEdusources(search, page, pageSize) {
                 'valorationsAverage.average': -1
             }
         },
-        { $skip: (page - 1) * pageSize },
+        { $skip: (realPage - 1) * pageSize },
         { $limit: pageSize },
         { $project: { creator: 0, } }
     ]);
-    const totalCount = await Edusource.countDocuments(search);
-    const totalPages = Math.ceil(totalCount / pageSize);
 
-    return { edusources, totalCount, totalPages }
+    return { edusources, totalCount, totalPages, realPage }
 }
