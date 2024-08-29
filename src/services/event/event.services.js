@@ -3,11 +3,12 @@ import Inscription from '../../models/inscription.model.js';
 
 export async function nextEventsPopulatedNotProccessed(eventId) {
   try {
-    return await eventId ?
-      getEventWithFilteredInscriptions(eventId) : getFutureEventsWithInscriptionCounts()
+    return (await eventId)
+      ? getEventWithFilteredInscriptions(eventId)
+      : getFutureEventsWithInscriptionCounts();
   } catch (error) {
-    console.error(error)
-    throw new Error("error del servicio de eventos");
+    console.error(error);
+    throw new Error('error del servicio de eventos');
   }
 }
 
@@ -46,28 +47,41 @@ async function getEventWithFilteredInscriptions(eventId) {
   const event = await Event.findById(eventId);
   const inscriptions = await Inscription.find({
     eventId: eventId,
+    proccessed: false,
     $or: [
       { premiumApplication: true },
       { inPersonApplication: true },
       { shareResources: true },
-    ]
+    ],
   }).populate('userId', '-password');
 
-  const premiumInscriptions = inscriptions.filter(inscription => inscription.premiumApplication);
-  const inPersonInscriptions = inscriptions.filter(inscription => inscription.inPersonApplication);
-  const shareResources = inscriptions.filter(inscription => inscription.shareResources);
+  const premiumInscriptions = inscriptions.filter(
+    (inscription) => inscription.premiumApplication
+  );
+  const inPersonInscriptions = inscriptions.filter(
+    (inscription) => inscription.inPersonApplication
+  );
+  const shareResources = inscriptions.filter(
+    (inscription) => inscription.shareResources
+  );
 
   return {
     event,
     premiumInscriptions,
     inPersonInscriptions,
-    shareResources
+    shareResources,
   };
 }
 
-export async function availableSeats(eventId, inPersonApplication, premiumApplication) {
+export async function availableSeats(
+  eventId,
+  inPersonApplication,
+  premiumApplication
+) {
   const inscription = await Event.findById(eventId)
-    .select('onlinePremiumPlaces inPersonPlaces onlinePremiumBookings inPersonBookings')
+    .select(
+      'onlinePremiumPlaces inPersonPlaces onlinePremiumBookings inPersonBookings'
+    )
     .lean();
   const {
     inPersonPlaces,
@@ -77,11 +91,17 @@ export async function availableSeats(eventId, inPersonApplication, premiumApplic
   } = inscription;
   let availability = false;
   // comprobar que la inscripción es correcta
-  if (inPersonApplication && premiumApplication) throw new Error("Cannot be in person and online premium at once");
-  if (!inPersonApplication && !premiumApplication) throw new Error("No option marked: inPersonApplication, premiumApplication");
+  if (inPersonApplication && premiumApplication)
+    throw new Error('Cannot be in person and online premium at once');
+  if (!inPersonApplication && !premiumApplication)
+    throw new Error(
+      'No option marked: inPersonApplication, premiumApplication'
+    );
 
-  if (inPersonApplication) availability = inPersonPlaces > inPersonBookings.length
-  else if (premiumApplication) availability = onlinePremiumPlaces > onlinePremiumBookings.length
+  if (inPersonApplication)
+    availability = inPersonPlaces > inPersonBookings.length;
+  else if (premiumApplication)
+    availability = onlinePremiumPlaces > onlinePremiumBookings.length;
 
-  return availability
+  return availability;
 }
