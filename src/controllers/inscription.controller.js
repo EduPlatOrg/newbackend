@@ -147,6 +147,7 @@ export const getInscriptionsByEventId = async (req, res) => {
     });
   }
   try {
+    console.log('Fetching inscriptions...********************ANTES');
     const inscriptions = await getUnprocessedInscriptions(eventId);
     if (!inscriptions) {
       return res.status(404).json({
@@ -321,8 +322,12 @@ export const proccessInscription = async (req, res) => {
     await Promise.all(promises);
 
     // poner proccessed en true
-    await Inscription.updateOne({ _id: inscriptionId }, { proccessed: true });
-
+    const inscriptionUpdated = await Inscription.findByIdAndUpdate(
+      { _id: inscriptionId },
+      { proccessed: true },
+      { new: true }
+    );
+    console.log({ inscriptionUpdated });
     return res.status(200).json({
       success: true,
     });

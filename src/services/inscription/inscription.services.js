@@ -5,6 +5,7 @@ import User from '../../models/user.model.js';
 import { sendAdminMail } from '../mailing.js';
 
 export async function getUnprocessedInscriptions(eventId) {
+  console.log('Fetching inscriptions...**************************');
   try {
     const inscriptions = await Inscription.find({
       eventId,
@@ -17,6 +18,7 @@ export async function getUnprocessedInscriptions(eventId) {
         { shareResources: true },
       ],
     });
+    console.log({ LENGTH: inscriptions.length });
     return inscriptions;
   } catch (error) {
     console.error('Error fetching inscriptions:', error);
