@@ -235,15 +235,15 @@ export const getEmailsFromEventByEventId = async (req, res) => {
     const emailsFromEvents = await Event.findById(eventId, { title: 1 }) // Excluimos todos los campos del evento
       .populate({
         path: 'onlineFreeBookings',
-        select: 'username email ',
+        select: 'username email firstname lastname phones',
       })
       .populate({
         path: 'onlinePremiumBookings',
-        select: 'username email',
+        select: 'username email firstname lastname phones',
       })
       .populate({
         path: 'inPersonBookings',
-        select: 'username email',
+        select: 'username email firstname lastname phones',
       });
 
     res.status(200).json({
