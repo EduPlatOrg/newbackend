@@ -62,11 +62,10 @@ export async function setUserAsContributorInEvent(eventId, userId) {
   }
 }
 
-export async function deleteInscriptionService(inscriptionId) {
+export async function deleteInscriptionService(inscriptionId, isBoss) {
   try {
     const deletedInscription = await Inscription.findByIdAndDelete(
-      inscriptionId,
-      isBoss
+      inscriptionId
     );
     if (!deletedInscription) {
       // esto no debe darse nunca porque ya se ha comprobado en el controller
