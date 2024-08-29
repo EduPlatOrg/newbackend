@@ -2,18 +2,15 @@ import Inscription from '../../models/inscription.model.js';
 import Event from '../../models/event.model.js';
 import User from '../../models/user.model.js';
 
-import {
-  sendAdminMail,
-} from '../mailing.js';
-
+import { sendAdminMail } from '../mailing.js';
 
 export async function getUnprocessedInscriptions(eventId) {
   try {
     const inscriptions = await Inscription.find({
       eventId,
-      $and: {
-        proccessed: false,
-      },
+
+      proccessed: false,
+
       $or: [
         { inPersonApplication: true },
         { premiumApplication: true },
@@ -65,10 +62,13 @@ export async function setUserAsContributorInEvent(eventId, userId) {
 
 export async function deleteInscriptionService(inscriptionId) {
   try {
-    const deletedInscription = await Inscription.findByIdAndDelete(inscriptionId, isBoss);
+    const deletedInscription = await Inscription.findByIdAndDelete(
+      inscriptionId,
+      isBoss
+    );
     if (!deletedInscription) {
       // esto no debe darse nunca porque ya se ha comprobado en el controller
-      throw new Error("Inscription not found");
+      throw new Error('Inscription not found');
     }
     const { eventId, userId, proccessed } = deletedInscription;
     // quitar id de inscripcion en array de eventos
@@ -95,7 +95,7 @@ export async function deleteInscriptionService(inscriptionId) {
         const { name, surname, email } = modifiedUser;
         const subject = 'Inscripción eliminada';
         const message = `Un usuario ha eliminado su suscripción al evento ${modifiedEvent.title}`;
-        await sendAdminMail(name, surname, email, subject, message)
+        await sendAdminMail(name, surname, email, subject, message);
       }
     }
   } catch (error) {
