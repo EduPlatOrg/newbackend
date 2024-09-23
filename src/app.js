@@ -56,6 +56,7 @@ app.use('/v1/valorations', valorationRouter);
 
 connectDB();
 
-const server = app.listen(port, () => {
+app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+export default app;
